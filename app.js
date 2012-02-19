@@ -1,5 +1,5 @@
 (function() {
-  var app, express, port, routes, stylus;
+  var app, express, port, routes, stylus, url;
 
   express = require('express');
 
@@ -7,10 +7,12 @@
 
   stylus = require('stylus');
 
+  url = require('url');
+
   app = module.exports = express.createServer();
 
   app.configure(function() {
-    var RedisStore;
+    var RedisStore, auth, rurl, store;
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
     app.use(express.bodyParser());
@@ -20,9 +22,21 @@
     }));
     RedisStore = require('connect-redis')(express);
     app.use(express.cookieParser());
+    if (process.env.REDISTOGO_URL) {
+      rurl = url.parse(process.env.REDISTOGO_URL);
+      auth = rurl.auth.split(':');
+      store = new RedisStore({
+        host: rurl.hostname,
+        port: rurl.port,
+        db: auth[0],
+        pass: auth[1]
+      });
+    } else {
+      store = new RedisStore();
+    }
     app.use(express.session({
       secret: "fancy",
-      store: new RedisStore,
+      store: store,
       cookie: {
         maxAge: 60000
       }

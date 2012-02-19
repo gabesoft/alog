@@ -1,6 +1,7 @@
 express = require('express')
-routes = require('./routes')
-stylus = require('stylus')
+routes  = require('./routes')
+stylus  = require('stylus')
+url     = require('url')
 
 app = module.exports = express.createServer()
 
@@ -14,10 +15,21 @@ app.configure () ->
 
   RedisStore = require('connect-redis')(express)
   app.use express.cookieParser()
-  #app.use express.session(secret: "fancy")
+
+  if process.env.REDISTOGO_URL
+    rurl = url.parse process.env.REDISTOGO_URL
+    auth = rurl.auth.split(':')
+    store = new RedisStore(
+      host: rurl.hostname
+      port: rurl.port
+      db  : auth[0]
+      pass: auth[1]
+    )
+  else
+    store = new RedisStore()
   app.use express.session(
     secret: "fancy"
-    store: new RedisStore
+    store: store
     cookie: { maxAge: 60000 }
   )
 
