@@ -11,8 +11,12 @@ app.configure () ->
 
   #RedisStore = require('connect-redis')(express)
   app.use express.cookieParser()
-  app.use express.session({ secret: "fancy" })
-  #app.use(express.session({ secret: "fancy", store: new RedisStore }))
+  app.use express.session(secret: "fancy")
+  #app.use express.session(
+    #secret: "fancy"
+    #store: new RedisStore
+    #cookie: { maxAge: 60000 }
+  #)
 
   app.use app.router
   app.use express.static(__dirname + '/public')
