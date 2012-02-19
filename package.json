@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "express": "2.5.8",
+    "connect-redis": "",
     "jade": ">= 0.0.1"
   },
   "engines": {
