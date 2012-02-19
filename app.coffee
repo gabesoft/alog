@@ -1,5 +1,6 @@
 express = require('express')
 routes = require('./routes')
+stylus = require('stylus')
 
 app = module.exports = express.createServer()
 
@@ -9,14 +10,16 @@ app.configure () ->
   app.use express.bodyParser()
   app.use express.methodOverride()
 
-  #RedisStore = require('connect-redis')(express)
+  app.use stylus.middleware(src: __dirname + '/public')
+
+  RedisStore = require('connect-redis')(express)
   app.use express.cookieParser()
-  app.use express.session(secret: "fancy")
-  #app.use express.session(
-    #secret: "fancy"
-    #store: new RedisStore
-    #cookie: { maxAge: 60000 }
-  #)
+  #app.use express.session(secret: "fancy")
+  app.use express.session(
+    secret: "fancy"
+    store: new RedisStore
+    cookie: { maxAge: 60000 }
+  )
 
   app.use app.router
   app.use express.static(__dirname + '/public')
@@ -31,6 +34,9 @@ app.configure 'production', () ->
 app.get '/', (req, res) ->
   req.session.views++
   res.render 'index', { title: req.session.views + ' Views' }
+
+app.get '/item/:id', (req, res) ->
+  res.send('item' + req.params.id)
 
 port = process.env.PORT or 3000
 app.listen port, () ->
