@@ -1,5 +1,7 @@
 {
-  "name": "application-name",
+  "name": "alog",
+  "description": "activity log",
+  "author": "gabriel <gabesoft@gmail.com>",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -8,10 +10,14 @@
     "jade": ">= 0.0.1",
     "redis": ">= 0.0.1"
   },
+  "devDependencies": {
+    "jasmine-node": ""
+  },
   "engines": {
     "node": "0.4.7"
   },
   "scripts": {
-    "test": "expresso"
+    "start": "node app.js",
+    "test" : "jasmine-node spec"
   }
 }
