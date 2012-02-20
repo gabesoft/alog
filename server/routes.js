@@ -1,10 +1,10 @@
 (function() {
 
   module.exports = function(app) {
-    var items, loadItem, redis, redisClient, url;
+    var createRedisClient, items, loadItem, redis, redisClient, url;
     redis = require('redis');
     url = require('url');
-    redisClient = function() {
+    createRedisClient = function() {
       var auth, client, rurl;
       if (process.env.REDISTOGO_URL) {
         rurl = url.parse(process.env.REDISTOGO_URL);
@@ -16,7 +16,8 @@
         return redis.createClient();
       }
     };
-    items = require('../models/items.js')(redis.createClient());
+    redisClient = createRedisClient();
+    items = require('../models/items.js')(redisClient);
     loadItem = function(req, res, next) {
       req.item = items.find(req.params.id);
       return next();
@@ -27,8 +28,14 @@
         title: req.session.views + ' Views'
       });
     });
-    return app.get('/item/:id', loadItem, function(req, res) {
+    app.get('/item/:id', loadItem, function(req, res) {
       return res.send(req.item);
+    });
+    return app.get('/item', function(req, res) {
+      return items.getAll(function(list) {
+        res.send(list);
+        return redisClient.quit();
+      });
     });
   };
 

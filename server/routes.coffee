@@ -2,7 +2,7 @@ module.exports = (app) ->
   redis = require('redis')
   url   = require('url')
 
-  redisClient = () ->
+  createRedisClient = () ->
     if process.env.REDISTOGO_URL
       rurl = url.parse process.env.REDISTOGO_URL
       auth = rurl.auth.split(':')
@@ -12,7 +12,8 @@ module.exports = (app) ->
     else
       redis.createClient()
 
-  items = require('../models/items.js')(redis.createClient())
+  redisClient = createRedisClient();
+  items = require('../models/items.js')(redisClient)
 
   loadItem = (req, res, next) ->
     req.item = items.find req.params.id
@@ -25,3 +26,7 @@ module.exports = (app) ->
   app.get '/item/:id', loadItem, (req, res) ->
     res.send(req.item)
 
+  app.get '/item', (req, res) ->
+    items.getAll (list) ->
+      res.send(list)
+      redisClient.quit()
