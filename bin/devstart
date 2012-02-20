@@ -1,4 +1,4 @@
 #!/bin/bash
 dir=`dirname $0`
-nodemon --debug $dir/../app.js
+nodemon --debug $dir/../server.js
 
