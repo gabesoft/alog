@@ -29,4 +29,9 @@ module.exports = (app) ->
   app.get '/item', (req, res) ->
     items.getAll (list) ->
       res.send(list)
-      redisClient.quit()
+      #redisClient.quit()
+
+  app.post '/item', (req, res) ->
+    items.add req.body, (item) ->
+      res.send(item)
+      #redisClient.quit()

@@ -31,10 +31,14 @@
     app.get('/item/:id', loadItem, function(req, res) {
       return res.send(req.item);
     });
-    return app.get('/item', function(req, res) {
+    app.get('/item', function(req, res) {
       return items.getAll(function(list) {
-        res.send(list);
-        return redisClient.quit();
+        return res.send(list);
+      });
+    });
+    return app.post('/item', function(req, res) {
+      return items.add(req.body, function(item) {
+        return res.send(item);
       });
     });
   };
