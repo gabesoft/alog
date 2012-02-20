@@ -1,14 +1,24 @@
 (function() {
 
   module.exports = function(app) {
-    var loadItem, redis;
+    var items, loadItem, redis, redisClient, url;
     redis = require('redis');
+    url = require('url');
+    redisClient = function() {
+      var auth, client, rurl;
+      if (process.env.REDISTOGO_URL) {
+        rurl = url.parse(process.env.REDISTOGO_URL);
+        auth = rurl.auth.split(':');
+        client = redis.createClient(rurl.port, rurl.hostname);
+        client.auth(auth[1]);
+        return client;
+      } else {
+        return redis.createClient();
+      }
+    };
+    items = require('../models/items.js')(redis.createClient());
     loadItem = function(req, res, next) {
-      req.item = {
-        id: req.params.id,
-        text: 'loaded item',
-        date: '12/31/1999'
-      };
+      req.item = items.find(req.params.id);
       return next();
     };
     app.get('/', function(req, res) {

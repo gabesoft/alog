@@ -12,7 +12,7 @@
     "stylus": ">= 0.24.0"
   },
   "devDependencies": {
-    "jasmine-node": ""
+    "jasmine-node": "1.0.19"
   },
   "engines": {
     "node": "0.4.7"

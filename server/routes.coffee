@@ -1,11 +1,21 @@
 module.exports = (app) ->
-  redis   = require('redis')
+  redis = require('redis')
+  url   = require('url')
+
+  redisClient = () ->
+    if process.env.REDISTOGO_URL
+      rurl = url.parse process.env.REDISTOGO_URL
+      auth = rurl.auth.split(':')
+      client = redis.createClient(rurl.port, rurl.hostname)
+      client.auth(auth[1])
+      client
+    else
+      redis.createClient()
+
+  items = require('../models/items.js')(redis.createClient())
 
   loadItem = (req, res, next) ->
-    req.item = 
-      id: req.params.id
-      text: 'loaded item'
-      date: '12/31/1999'
+    req.item = items.find req.params.id
     next()
 
   app.get '/', (req, res) ->

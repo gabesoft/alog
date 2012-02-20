@@ -1,3 +1,4 @@
 #!/bin/bash
 dir=`dirname $0`
-jasmine-node $dir/../spec
+$dir/../node_modules/jasmine-node/bin/jasmine-node --autotest $dir/../spec
+
