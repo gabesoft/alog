@@ -25,7 +25,7 @@ describe 'items', ->
     items.get 0, 5, (list) ->
       saved = true
       all   = list
-    waitsFor(() -> saved)
+    waitsFor () -> saved
     runs ->
       expect(all.length).toBeGreaterThan(1)
 
@@ -33,11 +33,23 @@ describe 'items', ->
     saved = false
     all = []
 
-    items.getAll (list) ->
+    items.get 0, -1, (list) ->
       saved = true
       all   = list
 
-    waitsFor((() -> saved), "timeout exceeded", 1000)
+    waitsFor () -> saved
     runs ->
-      console.log(all)
       expect(all.length).toBeGreaterThan(1)
+
+  it 'should get items count', ->
+    run = false
+    count = -1
+
+    items.len (len) ->
+      run = true
+      count = len
+
+    waitsFor ()-> run
+    runs ->
+      console.log(count)
+      expect(count).toBeGreaterThan(-1)

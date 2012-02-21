@@ -20,17 +20,19 @@ module.exports = (app) ->
     next()
 
   app.get '/', (req, res) ->
-    res.render 'index', { title: 'Activity Log' }
+    res.render 'index', title: 'Activity Log'
 
-  app.get '/item/:id', loadItem, (req, res) ->
+  app.get '/items/:id', loadItem, (req, res) ->
     res.send(req.item)
 
-  app.get '/item', (req, res) ->
-    items.getAll (list) ->
+  # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
+  # /items?start=0&limit=0 - returns all records
+  app.get '/items', (req, res) ->
+    start = (Number) req.query.start or 0
+    limit = (Number) req.query.limit or 10
+    items.get start, start + limit - 1, (list) ->
       res.send(list)
-      #redisClient.quit()
 
-  app.post '/item', (req, res) ->
+  app.post '/items', (req, res) ->
     items.add req.body, (item) ->
       res.send(item)
-      #redisClient.quit()

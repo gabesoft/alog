@@ -20,8 +20,7 @@ module.exports = (redis) ->
       if callback
         callback(reply.map JSON.parse)
 
-  getAll: (callback) ->
+  len: (callback) ->
     redis.llen key, (err, count) ->
-      redis.lrange key, 0, count, (err, reply) ->
-        if callback
-          callback(reply.map JSON.parse)
+      if callback
+        callback(count)

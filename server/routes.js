@@ -27,15 +27,18 @@
         title: 'Activity Log'
       });
     });
-    app.get('/item/:id', loadItem, function(req, res) {
+    app.get('/items/:id', loadItem, function(req, res) {
       return res.send(req.item);
     });
-    app.get('/item', function(req, res) {
-      return items.getAll(function(list) {
+    app.get('/items', function(req, res) {
+      var limit, start;
+      start = Number(req.query.start || 0);
+      limit = Number(req.query.limit || 10);
+      return items.get(start, start + limit - 1, function(list) {
         return res.send(list);
       });
     });
-    return app.post('/item', function(req, res) {
+    return app.post('/items', function(req, res) {
       return items.add(req.body, function(item) {
         return res.send(item);
       });

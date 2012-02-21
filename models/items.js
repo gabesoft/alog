@@ -28,11 +28,9 @@
           if (callback) return callback(reply.map(JSON.parse));
         });
       },
-      getAll: function(callback) {
+      len: function(callback) {
         return redis.llen(key, function(err, count) {
-          return redis.lrange(key, 0, count, function(err, reply) {
-            if (callback) return callback(reply.map(JSON.parse));
-          });
+          if (callback) return callback(count);
         });
       }
     };

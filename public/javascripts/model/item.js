@@ -31,6 +31,8 @@
       Items.__super__.constructor.apply(this, arguments);
     }
 
+    Items.prototype.url = '/items';
+
     Items.prototype.model = exports.Item;
 
     return Items;
