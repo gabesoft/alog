@@ -1,2 +1,10 @@
-h1= title
-p Welcome to #{title}
+div#alog-app 
+  div.title
+    h1= title
+  
+  div.content
+    div#create.create
+      input.add-item(id='add-item', placeholder='got something to log?', type='text')
+
+    div#items
+      ul#item-list

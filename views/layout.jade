@@ -3,10 +3,19 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+
+    // -TODO: bundle all javascripts
     script(type='text/javascript', src='javascripts/lib/jquery-1.7.1.js')
+    script(type='text/javascript', src='javascripts/lib/jquery.tmpl.js')
     script(type='text/javascript', src='javascripts/lib/json2.js')
     script(type='text/javascript', src='javascripts/lib/underscore.js')
     script(type='text/javascript', src='javascripts/lib/backbone.js')
     script(type='text/javascript', src='/browserify.js')
+
+    // templates
+    script(type='text/x-jquery-tmpl', id='item-template')
+      li.item-show
+        p ${date}
+        p ${text}
+
   body!= body
-  div= 'go nodemon'

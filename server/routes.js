@@ -23,9 +23,8 @@
       return next();
     };
     app.get('/', function(req, res) {
-      req.session.views++;
       return res.render('index', {
-        title: req.session.views + ' Views'
+        title: 'Activity Log'
       });
     });
     app.get('/item/:id', loadItem, function(req, res) {

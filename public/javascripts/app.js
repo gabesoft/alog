@@ -4,9 +4,11 @@
   model = require('./model/item.js');
 
   jQuery(function() {
-    var item;
+    var el, item, tmpl;
     item = new model.Item('hola');
-    return console.log('first item', item.toJSON());
+    tmpl = $('#item-template').template();
+    el = $($.tmpl(tmpl, item.toJSON()));
+    return $('#item-list').append(el);
   });
 
 }).call(this);

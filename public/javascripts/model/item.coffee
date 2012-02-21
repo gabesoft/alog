@@ -3,5 +3,7 @@ class exports.Item extends Backbone.Model
   initialize: (text) ->
     this.set 'date': new Date, 'text': text
   
+class exports.Items extends Backbone.Collection
+  model: exports.Item
 
 

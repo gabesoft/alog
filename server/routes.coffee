@@ -20,8 +20,7 @@ module.exports = (app) ->
     next()
 
   app.get '/', (req, res) ->
-    req.session.views++
-    res.render 'index', { title: req.session.views + ' Views' }
+    res.render 'index', { title: 'Activity Log' }
 
   app.get '/item/:id', loadItem, (req, res) ->
     res.send(req.item)
