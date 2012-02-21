@@ -24,21 +24,31 @@
       });
     });
     it('should get a range of items', function() {
-      var all, saved;
+      var added;
+      added = false;
       items.add({
-        text: 'fst'
-      });
-      saved = false;
-      all = [];
-      items.get(0, 5, function(list) {
-        saved = true;
-        return all = list;
-      });
+        text: 'fst',
+        date: new Date()
+      }, (function(item) {
+        return added = true;
+      }));
       waitsFor(function() {
-        return saved;
+        return added;
       });
       return runs(function() {
-        return expect(all.length).toBeGreaterThan(1);
+        var all, saved;
+        saved = false;
+        all = [];
+        items.get(0, 5, function(list) {
+          saved = true;
+          return all = list;
+        });
+        waitsFor(function() {
+          return saved;
+        });
+        return runs(function() {
+          return expect(all.length).toBeGreaterThan(1);
+        });
       });
     });
     it('should get all items', function() {

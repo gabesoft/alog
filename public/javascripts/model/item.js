@@ -12,13 +12,6 @@
 
     Item.prototype.url = '/items';
 
-    Item.prototype.initialize = function(text) {
-      return this.set({
-        'date': new Date,
-        'text': text
-      });
-    };
-
     return Item;
 
   })(Backbone.Model);

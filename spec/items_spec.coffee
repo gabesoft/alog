@@ -17,17 +17,22 @@ describe 'items', ->
       expect(item.id).toBeDefined()
 
   it 'should get a range of items', ->
-    items.add(text: 'fst')
+    added = false
 
-    saved = false
-    all = []
+    items.add text: 'fst', date: new Date(), ((item) -> added = true)
 
-    items.get 0, 5, (list) ->
-      saved = true
-      all   = list
-    waitsFor () -> saved
+    waitsFor () -> added
+
     runs ->
-      expect(all.length).toBeGreaterThan(1)
+      saved = false
+      all = []
+
+      items.get 0, 5, (list) ->
+        saved = true
+        all   = list
+      waitsFor () -> saved
+      runs ->
+        expect(all.length).toBeGreaterThan(1)
 
   it 'should get all items', ->
     saved = false
