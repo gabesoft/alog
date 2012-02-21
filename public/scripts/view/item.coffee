@@ -17,11 +17,8 @@ class Item extends Backbone.View
 class exports.Items extends Backbone.View
   events:
     'keypress #add-item': 'createOnEnter'
-    'blur #add-item'    : 'createOnBlur'
-    'click .add-item'   : 'createOnBlur'
 
   initialize: () ->
-    # TODO: the input should get its own view
     @input = $ '#add-item'
 
     @model.bind 'add', @prepend
@@ -54,7 +51,3 @@ class exports.Items extends Backbone.View
 
     @model.create text: text, date: new Date
     @input.val('')
-
-  createOnBlur: (e) ->
-    # TODO: implement (is this necessary)
-    console.log('blur')

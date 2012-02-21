@@ -49,9 +49,7 @@
     }
 
     Items.prototype.events = {
-      'keypress #add-item': 'createOnEnter',
-      'blur #add-item': 'createOnBlur',
-      'click .add-item': 'createOnBlur'
+      'keypress #add-item': 'createOnEnter'
     };
 
     Items.prototype.initialize = function() {
@@ -99,10 +97,6 @@
         date: new Date
       });
       return this.input.val('');
-    };
-
-    Items.prototype.createOnBlur = function(e) {
-      return console.log('blur');
     };
 
     return Items;

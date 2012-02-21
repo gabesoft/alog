@@ -24,7 +24,7 @@
     };
     app.get('/', function(req, res) {
       return res.render('index', {
-        title: 'Activity Log'
+        title: 'Log Book'
       });
     });
     app.get('/items/:id', loadItem, function(req, res) {

@@ -15,12 +15,13 @@ module.exports = (app) ->
   redisClient = createRedisClient();
   items = require('../models/items.js')(redisClient)
 
+  # sample code: to be removed
   loadItem = (req, res, next) ->
     req.item = items.find req.params.id
     next()
 
   app.get '/', (req, res) ->
-    res.render 'index', title: 'Activity Log'
+    res.render 'index', title: 'Log Book'
 
   app.get '/items/:id', loadItem, (req, res) ->
     res.send(req.item)
