@@ -1,25 +1,28 @@
 {
-  "name": "alog",
-  "description": "activity log",
-  "author": "gabriel <gabesoft@gmail.com>",
-  "version": "0.0.1",
-  "private": true,
-  "dependencies": {
-    "express": "2.5.8",
-    "connect-redis": ">= 0.0.1",
-    "jade": ">= 0.0.1",
-    "redis": ">= 0.0.1",
-    "stylus": ">= 0.24.0",
-    "browserify": ">= 1.9.4"
+  "name"            : "alog",
+  "description"     : "activity log",
+  "author"          : "gabriel <gabesoft@gmail.com>",
+  "version"         : "0.0.1",
+  "private"         : true,
+  "dependencies"    : {
+    "express"       : "2.5.8",
+    "connect-redis" : ">= 0.0.1",
+    "jade"          : ">= 0.0.1",
+    "redis"         : ">= 0.0.1",
+    "stylus"        : ">= 0.24.0",
+    "browserify"    : ">= 1.9.4"
   },
-  "devDependencies": {
-    "jasmine-node": "1.0.19"
+  "devDependencies" : {
+    "jasmine-node"  : "1.0.19"
   },
-  "engines": {
-    "node": "0.4.7"
+  "engines" : {
+    "node"  : "0.4.7"
   },
-  "scripts": {
-    "start": "node app.js",
-    "test" : "jasmine-node spec"
+  "scripts" : {
+    "start" : "node app.js",
+    "test"  : "jasmine-node spec",
+    "push"  : "git push heroku master",
+    "ps"    : "heroku ps",
+    "logs"  : "heroku logs"
   }
 }
