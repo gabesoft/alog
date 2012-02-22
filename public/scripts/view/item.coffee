@@ -1,6 +1,5 @@
 class Item extends Backbone.View
   tagName: 'li'
-  className: 'item-show'
 
   initialize: () ->
     @template = $('#item-template').template()

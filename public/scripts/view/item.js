@@ -15,8 +15,6 @@
 
     Item.prototype.tagName = 'li';
 
-    Item.prototype.className = 'item-show';
-
     Item.prototype.initialize = function() {
       return this.template = $('#item-template').template();
     };

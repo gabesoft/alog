@@ -1,20 +1,103 @@
+// mixins
+top-linear-background(a, b)
+  background -webkit-gradient(linear, left top, left bottom, from(a), to(b))
+  background -webkit-linear-gradient(top, a, b)
+  background -moz-linear-gradient(top, a, b)
+  background linear-gradient(top, a, b)
+
+box-sizing-border()
+  -webkit-box-sizing border-box
+  -moz-box-sizing border-box
+  -ms-box-sizing border-box
+  -0-box-sizing border-box
+  box-sizing border-box
+
+box-shadow(x, y, z, color)
+  -webkit-box-shadow x y z color
+  -moz-box-shadow x y z color
+  box-shadow x y z color
+
+box-display()
+  display: -webkit-box
+  -webkit-box-orient horizontal
+  -webkit-box-align stretch
+  -webkit-box-pack left
+
+  display: -moz-box
+  -moz-box-orient horizontal
+  -moz-box-align stretch
+  -moz-box-pack left
+
+flex(v)
+  -webkit-box-flex v
+  -moz-box-flex v
+  box-flex v
+
+// main style
+body
+  color #363636
+  background #d2d2d2
+
+.title 
+  border-bottom 1px solid #535353
+  overflow hidden
+  height 50px
+  line-height 50px
+
+  background #575859
+  top-linear-background(#575859, #272425)
+
+.title h2
+  color #ffffff
+  text-shadow 0 1px 1px #000000
+  margin 0 10px
+  padding 2px
+
+// .content
+//   overflow hidden
+//   position absolute
+//   left 0
+//   right 0
+//   top 50px
+//   bottom 0
+//   box-display()
+
+// .sidebar
+//   background #ededed
+//   width 200px
+//   flex(0)
+// 
+// .content.sidebar ul
+//   margin 0
+//   padding 0
+//   list-style none
+// 
+// .sidebar ul li
+//   display block
+//   padding 10px 10px 7px 20px
+//   border-bottom 1px solid #cdcdcc
+//   cursor pointer
+//   box-shadow(0, 1px, 1px, #fcfcfc)
+
 .create-item input
   width 100%
-  padding-left 0
+  margin-top 15px
+  padding-left 5px
   padding-right 0
-  text-align center
   border 1px solid gray
   font 16px HelveticaNeue, Helvetica
+  box-shadow(0, 3px, 5px, #000000)
+  box-sizing-border()
 
 .item-list li
   font-family: Georgia, "Times New Roman", Helvetica, Arial, sans-serif
   border 1px solid gray
-  background-color #DCDCDC
+  background-color #f5f5f5
   padding 5px
 
   .item-date
     font-size 14px
-    color #009ACD
+    color #009acd
     display block
 
   .item-text

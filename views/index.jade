@@ -1,13 +1,14 @@
 div#alog-app 
   div.container
     div.title
-      h1= title
+      h2= title
   
-    div#sidebar.one-third.column sidebar
+    div#content.content
+      div#sidebar.sidebar
 
-    div#content.one-third.column
-      div#create-item.create-item
-        input(id='add-item', placeholder='got something to log?', type='text')
+      div#main
+        div#create-item.create-item
+          input(id='add-item', placeholder='got something to log?', type='text')
 
-      div#items.items
-        ul#item-list.item-list
+        div#items.items
+          ul#item-list.item-list
