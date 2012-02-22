@@ -1,7 +1,24 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.create-item input {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  border: 1px solid #808080;
+  font: 16px HelveticaNeue, Helvetica;
 }
-a {
-  color: #00b7ff;
+.item-list li {
+  font-family: Georgia, "Times New Roman", Helvetica, Arial, sans-serif;
+  border: 1px solid #808080;
+  background-color: #dcdcdc;
+  padding: 5px;
+}
+.item-list li .item-date {
+  font-size: 14px;
+  color: #009acd;
+  display: block;
+}
+.item-list li .item-text {
+  font-size: 21px;
+  margin-top: 5px;
+  display: block;
 }

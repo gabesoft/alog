@@ -5,6 +5,7 @@ html
     link(rel='stylesheet', href='/stylesheets/base.css')
     link(rel='stylesheet', href='/stylesheets/layout.css')
     link(rel='stylesheet', href='/stylesheets/skeleton.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
 
     // -TODO: bundle all javascripts
     script(type='text/javascript', src='scripts/lib/jquery-1.7.1.js')
@@ -17,7 +18,7 @@ html
 
     // templates
     script(type='text/x-jquery-tmpl', id='item-template')
-      p ${date}
-      p ${text}
+      span.item-date ${date}
+      span.item-text ${text}
 
   body!= body
