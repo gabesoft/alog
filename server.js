@@ -17,7 +17,7 @@
     return console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 
-  bundle = require('browserify')(__dirname + '/public/javascripts/app.js', {
+  bundle = require('browserify')(__dirname + '/public/scripts/app.js', {
     debug: false,
     mount: '/all.js'
   });
