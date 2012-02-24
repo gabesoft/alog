@@ -38,10 +38,13 @@
         return res.send(list);
       });
     });
-    return app.post('/items', function(req, res) {
+    app.post('/items', function(req, res) {
       return items.add(req.body, function(item) {
         return res.send(item);
       });
+    });
+    return app["delete"]('/items', function(req, res) {
+      return res.send({});
     });
   };
 

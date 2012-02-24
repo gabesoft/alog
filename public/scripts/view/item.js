@@ -1,22 +1,32 @@
 (function() {
-  var Item,
+  var Item, model,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  model = require('../model/item.js');
 
   Item = (function(_super) {
 
     __extends(Item, _super);
 
     function Item() {
+      this.repostItem = __bind(this.repostItem, this);
+      this.deleteItem = __bind(this.deleteItem, this);
       this.render = __bind(this.render, this);
       Item.__super__.constructor.apply(this, arguments);
     }
 
     Item.prototype.tagName = 'li';
 
-    Item.prototype.initialize = function() {
-      return this.template = $('#item-template').template();
+    Item.prototype.events = {
+      'click input.delete': 'deleteItem',
+      'click input.repost': 'repostItem'
+    };
+
+    Item.prototype.initialize = function(config) {
+      this.template = $('#item-template').template();
+      return this.input = config.input;
     };
 
     Item.prototype.render = function() {
@@ -29,6 +39,20 @@
       html = $.tmpl(this.template, data);
       $(this.el).html(html);
       return this;
+    };
+
+    Item.prototype.deleteItem = function(e) {
+      var parent;
+      this.model.destroy();
+      parent = $(e.target.parentElement);
+      return parent.fadeOut(function() {
+        return parent.hide();
+      });
+    };
+
+    Item.prototype.repostItem = function(e) {
+      this.input.val(this.model.get('text'));
+      return this.input.trigger('keypress', 13);
     };
 
     return Item;
@@ -63,20 +87,24 @@
     };
 
     Items.prototype.prepend = function(item) {
-      var view;
-      view = new Item({
-        model: item
-      });
-      $('#item-list').prepend(view.render().el);
-      return this;
+      var itemEl;
+      itemEl = $('#item-list');
+      return this.addOne(item, itemEl.prepend, itemEl);
     };
 
     Items.prototype.append = function(item) {
+      var itemEl;
+      itemEl = $('#item-list');
+      return this.addOne(item, itemEl.append, itemEl);
+    };
+
+    Items.prototype.addOne = function(item, addfn, scope) {
       var view;
       view = new Item({
-        model: item
+        model: item,
+        input: this.input
       });
-      $('#item-list').append(view.render().el);
+      addfn.call(scope, view.render().el);
       return this;
     };
 
@@ -85,9 +113,10 @@
       return this;
     };
 
-    Items.prototype.createOnEnter = function(e) {
-      var text;
-      if (e.keyCode !== 13) return;
+    Items.prototype.createOnEnter = function(e, keyCode) {
+      var key, text;
+      key = keyCode || e.keyCode;
+      if (key !== 13) return;
       text = this.input.val();
       if (!text) return;
       this.model.create({

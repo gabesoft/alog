@@ -37,3 +37,7 @@ module.exports = (app) ->
   app.post '/items', (req, res) ->
     items.add req.body, (item) ->
       res.send(item)
+
+  app.delete '/items', (req, res) ->
+    # TODO: delete model
+    res.send({})

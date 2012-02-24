@@ -1,8 +1,15 @@
+model = require('../model/item.js')
+
 class Item extends Backbone.View
   tagName: 'li'
 
-  initialize: () ->
+  events:
+    'click input.delete': 'deleteItem',
+    'click input.repost': 'repostItem'
+
+  initialize: (config) ->
     @template = $('#item-template').template()
+    @input = config.input
 
   render: () =>
     json = @model.toJSON()
@@ -12,6 +19,17 @@ class Item extends Backbone.View
     html = $.tmpl @template, data
     $(@el).html html
     @
+
+  deleteItem: (e) =>
+    @model.destroy();
+
+    parent = $(e.target.parentElement)
+    parent.fadeOut ->
+      parent.hide()
+
+  repostItem: (e) =>
+    @input.val(@model.get('text'))
+    @input.trigger('keypress', 13);
 
 class exports.Items extends Backbone.View
   events:
@@ -27,21 +45,26 @@ class exports.Items extends Backbone.View
       data: { start: 0, limit: 10 }
 
   prepend: (item) =>
-    view = new Item model: item
-    $('#item-list').prepend view.render().el
-    @
+    itemEl = $('#item-list')
+    @addOne item, itemEl.prepend, itemEl
 
   append: (item) =>
-    view = new Item model: item
-    $('#item-list').append view.render().el
+    itemEl = $('#item-list')
+    @addOne item, itemEl.append, itemEl
+
+  addOne: (item, addfn, scope) ->
+    view = new Item model: item, input: @input
+    addfn.call scope, view.render().el
     @
 
   addAll: () =>
     @model.each @append
     @
 
-  createOnEnter: (e) ->
-    if e.keyCode != 13
+  createOnEnter: (e, keyCode) ->
+    key = keyCode or e.keyCode
+
+    if key != 13
       return
 
     text = @input.val()
