@@ -34,7 +34,7 @@
       json = this.model.toJSON();
       data = {
         text: json.text,
-        date: new Date(json.date).format('dddd, mmmm d hh:MM:ss TT')
+        date: new Date(json.date).format('ddd, mm/dd hh:MM:ss TT')
       };
       html = $.tmpl(this.template, data);
       $(this.el).html(html);

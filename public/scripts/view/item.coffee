@@ -15,7 +15,7 @@ class Item extends Backbone.View
     json = @model.toJSON()
     data = 
       text: json.text
-      date: new Date(json.date).format('dddd, mmmm d hh:MM:ss TT')
+      date: new Date(json.date).format('ddd, mm/dd hh:MM:ss TT')
     html = $.tmpl @template, data
     $(@el).html html
     @
