@@ -46,7 +46,7 @@
       this.model.destroy();
       parent = $(e.target.parentElement);
       return parent.fadeOut(function() {
-        return parent.hide();
+        return parent.remove();
       });
     };
 
@@ -81,7 +81,7 @@
       return this.model.fetch({
         data: {
           start: 0,
-          limit: 10
+          limit: 100
         }
       });
     };

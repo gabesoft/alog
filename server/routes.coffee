@@ -39,5 +39,5 @@ module.exports = (app) ->
       res.send(item)
 
   app.delete '/items', (req, res) ->
-    # TODO: delete model
-    res.send({})
+    items.pop (item) ->
+      res.send(item)

@@ -3,8 +3,10 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/base.css')
-    link(rel='stylesheet', href='/stylesheets/layout.css')
-    link(rel='stylesheet', href='/stylesheets/skeleton.css')
+
+    // use the mobile portrait media for now
+    link(rel='stylesheet', href='/stylesheets/skeleton.css', media='only screen and (max-width: 767px)')
+
     link(rel='stylesheet', href='/stylesheets/style.css')
 
     // -TODO: bundle all javascripts

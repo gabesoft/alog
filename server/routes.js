@@ -44,7 +44,9 @@
       });
     });
     return app["delete"]('/items', function(req, res) {
-      return res.send({});
+      return items.pop(function(item) {
+        return res.send(item);
+      });
     });
   };
 

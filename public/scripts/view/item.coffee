@@ -25,7 +25,7 @@ class Item extends Backbone.View
 
     parent = $(e.target.parentElement)
     parent.fadeOut ->
-      parent.hide()
+      parent.remove()
 
   repostItem: (e) =>
     @input.val(@model.get('text'))
@@ -42,7 +42,7 @@ class exports.Items extends Backbone.View
     @model.bind 'reset', @addAll
 
     @model.fetch
-      data: { start: 0, limit: 10 }
+      data: { start: 0, limit: 100 }
 
   prepend: (item) =>
     itemEl = $('#item-list')
