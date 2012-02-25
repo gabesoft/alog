@@ -11,6 +11,9 @@ class Item extends Backbone.View
     @template = $('#item-template').template()
     @input = config.input
 
+  getDeleteButton: () ->
+    $(@el).children('input.delete').first()
+
   render: () =>
     json = @model.toJSON()
     data = 
@@ -31,6 +34,19 @@ class Item extends Backbone.View
     @input.val(@model.get('text'))
     @input.trigger('keypress', 13);
 
+  showDelete: () ->
+    button = @getDeleteButton()
+    hide = () ->
+      button.fadeOut 'slow', () ->
+        button.hide()
+    button.fadeIn 'slow', () ->
+      _.delay hide, 40000
+    @
+
+  finalize: () ->
+    button = @getDeleteButton()
+    button.hide()
+
 class exports.Items extends Backbone.View
   events:
     'keypress #add-item': 'createOnEnter'
@@ -42,7 +58,7 @@ class exports.Items extends Backbone.View
     @model.bind 'reset', @addAll
 
     @model.fetch
-      data: { start: 0, limit: 100 }
+      data: { start: 0, limit: 50 }
 
   prepend: (item) =>
     itemEl = $('#item-list')
@@ -53,8 +69,13 @@ class exports.Items extends Backbone.View
     @addOne item, itemEl.append, itemEl
 
   addOne: (item, addfn, scope) ->
-    view = new Item model: item, input: @input
-    addfn.call scope, view.render().el
+    @last?.finalize()
+
+    @last = new Item model: item, input: @input
+    addfn.call scope, @last.render().el
+
+    id = item.get('id')
+    @last.showDelete() unless id?
     @
 
   addAll: () =>

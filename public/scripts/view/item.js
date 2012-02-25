@@ -29,6 +29,10 @@
       return this.input = config.input;
     };
 
+    Item.prototype.getDeleteButton = function() {
+      return $(this.el).children('input.delete').first();
+    };
+
     Item.prototype.render = function() {
       var data, html, json;
       json = this.model.toJSON();
@@ -53,6 +57,26 @@
     Item.prototype.repostItem = function(e) {
       this.input.val(this.model.get('text'));
       return this.input.trigger('keypress', 13);
+    };
+
+    Item.prototype.showDelete = function() {
+      var button, hide;
+      button = this.getDeleteButton();
+      hide = function() {
+        return button.fadeOut('slow', function() {
+          return button.hide();
+        });
+      };
+      button.fadeIn('slow', function() {
+        return _.delay(hide, 40000);
+      });
+      return this;
+    };
+
+    Item.prototype.finalize = function() {
+      var button;
+      button = this.getDeleteButton();
+      return button.hide();
     };
 
     return Item;
@@ -81,7 +105,7 @@
       return this.model.fetch({
         data: {
           start: 0,
-          limit: 100
+          limit: 50
         }
       });
     };
@@ -99,12 +123,15 @@
     };
 
     Items.prototype.addOne = function(item, addfn, scope) {
-      var view;
-      view = new Item({
+      var id, _ref;
+      if ((_ref = this.last) != null) _ref.finalize();
+      this.last = new Item({
         model: item,
         input: this.input
       });
-      addfn.call(scope, view.render().el);
+      addfn.call(scope, this.last.render().el);
+      id = item.get('id');
+      if (id == null) this.last.showDelete();
       return this;
     };
 

@@ -62,6 +62,3 @@ body {
 .item-list input.delete[type='button'] {
   display: none;
 }
-.item-list li:first-child .delete {
-  display: inline-block;
-}
