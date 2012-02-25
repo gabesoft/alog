@@ -38,6 +38,7 @@ module.exports = (app) ->
     items.add req.body, (item) ->
       res.send(item)
 
+  # only the latest added item can be deleted
   app.delete '/items', (req, res) ->
     items.pop (item) ->
       res.send(item)
