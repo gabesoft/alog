@@ -39,3 +39,8 @@ module.exports = (app, express) ->
   app.configure 'production', () ->
     app.use express.errorHandler()
 
+  app.dynamicHelpers
+    session: (req, res) ->
+      req.session
+    flash  : (req, res) ->
+      req.flash()

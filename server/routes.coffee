@@ -45,7 +45,7 @@ module.exports = (app) ->
       res.send(item)
 
   app.get '/login', (req, res) ->
-    res.render 'login', title: 'Log Book', info: 'Info', warn: ''
+    res.render 'login', title: 'Log Book'
 
   app.post '/login', (req, res) ->
     cred = req.body.user
@@ -55,6 +55,6 @@ module.exports = (app) ->
         res.redirect '/'
       else
         req.flash('warn', 'login failed')
-        res.render 'login', title: 'Log Book', info: '', warn: req.flash?().warn
+        res.render 'login', title: 'Log Book'
 
 

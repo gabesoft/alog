@@ -5,8 +5,8 @@ div.container
     form(method='post', action='login')
       fieldset
         div.message
-          span.info= info
-          span.warn= warn
+          span.info= flash.info
+          span.warn= flash.warn
 
         input(type='text', name='user[name]', placeholder='username')
         input(type='password', name='user[pass]', placeholder='password')

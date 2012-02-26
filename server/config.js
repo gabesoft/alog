@@ -46,8 +46,16 @@
         showStack: true
       }));
     });
-    return app.configure('production', function() {
+    app.configure('production', function() {
       return app.use(express.errorHandler());
+    });
+    return app.dynamicHelpers({
+      session: function(req, res) {
+        return req.session;
+      },
+      flash: function(req, res) {
+        return req.flash();
+      }
     });
   };
 

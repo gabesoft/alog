@@ -54,9 +54,7 @@
     });
     app.get('/login', function(req, res) {
       return res.render('login', {
-        title: 'Log Book',
-        info: 'Info',
-        warn: ''
+        title: 'Log Book'
       });
     });
     return app.post('/login', function(req, res) {
@@ -69,9 +67,7 @@
         } else {
           req.flash('warn', 'login failed');
           return res.render('login', {
-            title: 'Log Book',
-            info: '',
-            warn: typeof req.flash === "function" ? req.flash().warn : void 0
+            title: 'Log Book'
           });
         }
       });
