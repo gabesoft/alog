@@ -3,13 +3,15 @@ module.exports = (app) ->
   url   = require('url')
 
   createRedisClient = () ->
-    client = redis.createClient()
+    client = null
 
-    if process.env.REDISTOGO_URL
+    if process.env.REDISTOGO_URL?
       rurl = url.parse process.env.REDISTOGO_URL
       auth = rurl.auth.split(':')
       client = redis.createClient(rurl.port, rurl.hostname)
       client.auth(auth[1])
+    else
+      client = redis.createClient()
 
     client.select app.set('redisdb'), (res, err) ->
       console.log res, err

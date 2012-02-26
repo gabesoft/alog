@@ -6,12 +6,14 @@
     url = require('url');
     createRedisClient = function() {
       var auth, client, rurl;
-      client = redis.createClient();
-      if (process.env.REDISTOGO_URL) {
+      client = null;
+      if (process.env.REDISTOGO_URL != null) {
         rurl = url.parse(process.env.REDISTOGO_URL);
         auth = rurl.auth.split(':');
         client = redis.createClient(rurl.port, rurl.hostname);
         client.auth(auth[1]);
+      } else {
+        client = redis.createClient();
       }
       client.select(app.set('redisdb'), function(res, err) {
         return console.log(res, err);
