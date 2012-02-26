@@ -1,9 +1,5 @@
 (function() {
-  var model, router, view;
-
-  model = require('./model/itemlist.js');
-
-  view = require('./view/logbook.js');
+  var router;
 
   router = require('./router.js');
 

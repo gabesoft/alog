@@ -8,17 +8,14 @@ class exports.Router extends Backbone.Router
     ''      : 'main'
 
   main: () ->
-    # init html
     tmpl = $('#main-template').template()
     content = $ '#content'
     content.html($.tmpl tmpl)
 
-    # set up models & views
     items = new model.ItemList()
-    itemsView = new view.LogBook model: items, el: content
+    itemsView = new view.LogBook(model: items, el: content)
 
   login: () ->
-    # init html
     tmpl = $('#login-template').template()
     content = $ '#content'
     data = { message: 'Enter your credentials', error: 'Invalid password' }

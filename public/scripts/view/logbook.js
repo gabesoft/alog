@@ -59,7 +59,12 @@
     };
 
     LogBook.prototype.addAll = function() {
-      this.model.each(this.append);
+      var append, model;
+      model = this.model;
+      append = this.append;
+      _.delay((function() {
+        return model.each(append);
+      }), 10);
       return this;
     };
 
