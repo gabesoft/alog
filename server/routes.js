@@ -1,7 +1,7 @@
 (function() {
 
   module.exports = function(app) {
-    var createRedisClient, items, loadItem, redis, redisClient, url;
+    var authenticate, createRedisClient, items, redis, redisClient, url, users;
     redis = require('redis');
     url = require('url');
     createRedisClient = function() {
@@ -17,20 +17,24 @@
       }
     };
     redisClient = createRedisClient();
+    redisClient.on('error', function(e) {
+      return console.log(e);
+    });
     items = require('../models/items.js')(redisClient);
-    loadItem = function(req, res, next) {
-      req.item = items.find(req.params.id);
-      return next();
+    users = require('../models/users.js')(redisClient);
+    authenticate = function(req, res, next) {
+      if (req.session.user) {
+        return next();
+      } else {
+        return res.redirect('/login');
+      }
     };
-    app.get('/', function(req, res) {
+    app.get('/', authenticate, function(req, res) {
       return res.render('index', {
         title: 'Log Book'
       });
     });
-    app.get('/items/:id', loadItem, function(req, res) {
-      return res.send(req.item);
-    });
-    app.get('/items', function(req, res) {
+    app.get('/items', authenticate, function(req, res) {
       var limit, start;
       start = Number(req.query.start || 0);
       limit = Number(req.query.limit || 10);
@@ -38,12 +42,12 @@
         return res.send(list);
       });
     });
-    app.post('/items', function(req, res) {
+    app.post('/items', authenticate, function(req, res) {
       return items.add(req.body, function(item) {
         return res.send(item);
       });
     });
-    app["delete"]('/items', function(req, res) {
+    app["delete"]('/items', authenticate, function(req, res) {
       return items.pop(function(item) {
         return res.send(item);
       });
@@ -52,14 +56,24 @@
       return res.render('login', {
         title: 'Log Book',
         info: 'Info',
-        error: ''
+        warn: ''
       });
     });
     return app.post('/login', function(req, res) {
-      return res.render('login', {
-        title: 'Log Book',
-        info: '',
-        error: 'Error'
+      var cred;
+      cred = req.body.user;
+      return users.authenticate(cred.name, cred.pass, function(user) {
+        if (user != null) {
+          req.session.user = user;
+          return res.redirect('/');
+        } else {
+          req.flash('warn', 'login failed');
+          return res.render('login', {
+            title: 'Log Book',
+            info: '',
+            warn: typeof req.flash === "function" ? req.flash().warn : void 0
+          });
+        }
       });
     });
   };

@@ -13,40 +13,48 @@ module.exports = (app) ->
       redis.createClient()
 
   redisClient = createRedisClient();
+  redisClient.on('error', (e) -> console.log e)
+
   items = require('../models/items.js')(redisClient)
+  users = require('../models/users.js')(redisClient)
 
-  # sample code: to be removed
-  loadItem = (req, res, next) ->
-    req.item = items.find req.params.id
-    next()
+  authenticate = (req, res, next) ->
+    if req.session.user
+      next()
+    else
+      res.redirect('/login')
 
-  app.get '/', (req, res) ->
+  app.get '/', authenticate, (req, res) ->
     res.render 'index', title: 'Log Book'
-
-  app.get '/items/:id', loadItem, (req, res) ->
-    res.send(req.item)
 
   # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
   # /items?start=0&limit=0 - returns all records
-  app.get '/items', (req, res) ->
+  app.get '/items', authenticate, (req, res) ->
     start = (Number) req.query.start or 0
     limit = (Number) req.query.limit or 10
     items.get start, start + limit - 1, (list) ->
       res.send(list)
 
-  app.post '/items', (req, res) ->
+  app.post '/items', authenticate, (req, res) ->
     items.add req.body, (item) ->
       res.send(item)
 
   # only the latest added item can be deleted
-  app.delete '/items', (req, res) ->
+  app.delete '/items', authenticate, (req, res) ->
     items.pop (item) ->
       res.send(item)
 
   app.get '/login', (req, res) ->
-    res.render 'login', title: 'Log Book', info: 'Info', error: ''
+    res.render 'login', title: 'Log Book', info: 'Info', warn: ''
 
   app.post '/login', (req, res) ->
-    res.render 'login', title: 'Log Book', info: '', error: 'Error'
+    cred = req.body.user
+    users.authenticate cred.name, cred.pass, (user) ->
+      if user?
+        req.session.user = user
+        res.redirect '/'
+      else
+        req.flash('warn', 'login failed')
+        res.render 'login', title: 'Log Book', info: '', warn: req.flash?().warn
 
 

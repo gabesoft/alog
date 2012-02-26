@@ -40,6 +40,7 @@
       return app.use(express.static(__dirname + '/../public'));
     });
     app.configure('development', function() {
+      app.use(express.logger());
       return app.use(express.errorHandler({
         dumpExceptions: true,
         showStack: true

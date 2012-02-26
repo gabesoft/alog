@@ -4,9 +4,6 @@
     var MAX_ITEMS, key;
     MAX_ITEMS = 1000;
     key = 'items';
-    redis.on('error', function(e) {
-      return console.log(e);
-    });
     return {
       add: function(item, callback) {
         if (item == null) return;

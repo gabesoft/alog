@@ -33,6 +33,7 @@ module.exports = (app, express) ->
     app.use express.static(__dirname + '/../public')
 
   app.configure 'development', () ->
+    app.use express.logger()
     app.use express.errorHandler({ dumpExceptions: true, showStack: true })
 
   app.configure 'production', () ->

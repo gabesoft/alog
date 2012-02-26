@@ -2,8 +2,6 @@ module.exports = (redis) ->
   MAX_ITEMS = 1000
   key = 'items'
 
-  redis.on('error', (e) -> console.log e)
-
   add: (item, callback) ->
     return unless item?
     redis.incr 'item.id', (err, id) ->
