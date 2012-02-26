@@ -1,8 +1,12 @@
 # TODO: mock redis
 redis = require('redis').createClient()
 items = require('../models/items.js')(redis)
+helper = require('./helper.js')(redis, items)
 
 describe 'items', ->
+  beforeEach () ->
+    helper.reset()
+
   it 'should add new item and set the id', ->
     item = 
       text: 'first'
@@ -17,12 +21,8 @@ describe 'items', ->
       expect(item.id).toBeDefined()
 
   it 'should get a range of items', ->
-    added = false
-
-    items.add text: 'fst', date: new Date(), ((item) -> added = true)
-
-    waitsFor () -> added
-
+    helper.addItem text: 'fst', date: new Date()
+    helper.addItem text: 'snd', date: new Date()
     runs ->
       saved = false
       all = []
@@ -30,31 +30,41 @@ describe 'items', ->
       items.get 0, 5, (list) ->
         saved = true
         all   = list
+
       waitsFor () -> saved
       runs ->
-        expect(all.length).toBeGreaterThan(1)
+        expect(all.length).toEqual(2)
 
   it 'should get all items', ->
-    saved = false
-    all = []
+    helper.addItem text: 'fst', date: new Date()
+    helper.addItem text: 'snd', date: new Date()
 
-    items.get 0, -1, (list) ->
-      saved = true
-      all   = list
-
-    waitsFor () -> saved
     runs ->
-      expect(all.length).toBeGreaterThan(1)
+      saved = false
+      all = []
+
+      items.get 0, -1, (list) ->
+        saved = true
+        all   = list
+
+      waitsFor () -> saved
+      runs ->
+        expect(all.length).toEqual(2)
 
   it 'should get items count', ->
-    run = false
-    count = -1
+    helper.addItem text: 'fst', date: new Date()
+    helper.addItem text: 'snd', date: new Date()
+    helper.addItem text: 'trd', date: new Date()
 
-    items.len (len) ->
-      run = true
-      count = len
-
-    waitsFor ()-> run
     runs ->
-      console.log(count)
-      expect(count).toBeGreaterThan(-1)
+      run = false
+      count = -1
+
+      items.len (len) ->
+        run = true
+        count = len
+
+      waitsFor ()-> run
+      runs ->
+        console.log(count)
+        expect(count).toEqual(3)

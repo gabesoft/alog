@@ -6,15 +6,17 @@
     url = require('url');
     createRedisClient = function() {
       var auth, client, rurl;
+      client = redis.createClient();
       if (process.env.REDISTOGO_URL) {
         rurl = url.parse(process.env.REDISTOGO_URL);
         auth = rurl.auth.split(':');
         client = redis.createClient(rurl.port, rurl.hostname);
         client.auth(auth[1]);
-        return client;
-      } else {
-        return redis.createClient();
       }
+      client.select(app.set('redisdb'), function(res, err) {
+        return console.log(res, err);
+      });
+      return client;
     };
     redisClient = createRedisClient();
     redisClient.on('error', function(e) {

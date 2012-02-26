@@ -1,4 +1,4 @@
 #!/bin/bash
 dir=`dirname $0`
-nodemon --debug $dir/../server.js
+NODE_ENV=development PORT=3000 nodemon --debug $dir/../server.js
 

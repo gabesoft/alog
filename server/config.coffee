@@ -32,12 +32,20 @@ module.exports = (app, express) ->
     app.use app.router
     app.use express.static(__dirname + '/../public')
 
+  app.configure 'test', () ->
+    app.use express.logger()
+    app.use express.errorHandler({ dumpExceptions: true, showStack: true })
+    app.set 'redisdb', 2
+
   app.configure 'development', () ->
     app.use express.logger()
     app.use express.errorHandler({ dumpExceptions: true, showStack: true })
+    app.set 'redisdb', 1
 
   app.configure 'production', () ->
+    app.use express.logger()
     app.use express.errorHandler()
+    app.set 'redisdb', 0
 
   app.dynamicHelpers
     session: (req, res) ->

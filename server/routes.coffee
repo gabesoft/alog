@@ -3,14 +3,18 @@ module.exports = (app) ->
   url   = require('url')
 
   createRedisClient = () ->
+    client = redis.createClient()
+
     if process.env.REDISTOGO_URL
       rurl = url.parse process.env.REDISTOGO_URL
       auth = rurl.auth.split(':')
       client = redis.createClient(rurl.port, rurl.hostname)
       client.auth(auth[1])
-      client
-    else
-      redis.createClient()
+
+    client.select app.set('redisdb'), (res, err) ->
+      console.log res, err
+
+    client
 
   redisClient = createRedisClient();
   redisClient.on('error', (e) -> console.log e)
@@ -19,10 +23,7 @@ module.exports = (app) ->
   users = require('../models/users.js')(redisClient)
 
   authenticate = (req, res, next) ->
-    if req.session.user
-      next()
-    else
-      res.redirect('/login')
+    if req.session.user then next() else res.redirect('/login')
 
   app.get '/', authenticate, (req, res) ->
     res.render 'index', title: 'Log Book'

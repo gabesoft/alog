@@ -1,11 +1,16 @@
 (function() {
-  var items, redis;
+  var helper, items, redis;
 
   redis = require('redis').createClient();
 
   items = require('../models/items.js')(redis);
 
+  helper = require('./helper.js')(redis, items);
+
   describe('items', function() {
+    beforeEach(function() {
+      return helper.reset();
+    });
     it('should add new item and set the id', function() {
       var item, saved;
       item = {
@@ -24,16 +29,13 @@
       });
     });
     it('should get a range of items', function() {
-      var added;
-      added = false;
-      items.add({
+      helper.addItem({
         text: 'fst',
         date: new Date()
-      }, (function(item) {
-        return added = true;
-      }));
-      waitsFor(function() {
-        return added;
+      });
+      helper.addItem({
+        text: 'snd',
+        date: new Date()
       });
       return runs(function() {
         var all, saved;
@@ -47,39 +49,63 @@
           return saved;
         });
         return runs(function() {
-          return expect(all.length).toBeGreaterThan(1);
+          return expect(all.length).toEqual(2);
         });
       });
     });
     it('should get all items', function() {
-      var all, saved;
-      saved = false;
-      all = [];
-      items.get(0, -1, function(list) {
-        saved = true;
-        return all = list;
+      helper.addItem({
+        text: 'fst',
+        date: new Date()
       });
-      waitsFor(function() {
-        return saved;
+      helper.addItem({
+        text: 'snd',
+        date: new Date()
       });
       return runs(function() {
-        return expect(all.length).toBeGreaterThan(1);
+        var all, saved;
+        saved = false;
+        all = [];
+        items.get(0, -1, function(list) {
+          saved = true;
+          return all = list;
+        });
+        waitsFor(function() {
+          return saved;
+        });
+        return runs(function() {
+          return expect(all.length).toEqual(2);
+        });
       });
     });
     return it('should get items count', function() {
-      var count, run;
-      run = false;
-      count = -1;
-      items.len(function(len) {
-        run = true;
-        return count = len;
+      helper.addItem({
+        text: 'fst',
+        date: new Date()
       });
-      waitsFor(function() {
-        return run;
+      helper.addItem({
+        text: 'snd',
+        date: new Date()
+      });
+      helper.addItem({
+        text: 'trd',
+        date: new Date()
       });
       return runs(function() {
-        console.log(count);
-        return expect(count).toBeGreaterThan(-1);
+        var count, run;
+        run = false;
+        count = -1;
+        items.len(function(len) {
+          run = true;
+          return count = len;
+        });
+        waitsFor(function() {
+          return run;
+        });
+        return runs(function() {
+          console.log(count);
+          return expect(count).toEqual(3);
+        });
       });
     });
   });

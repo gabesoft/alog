@@ -39,15 +39,26 @@
       app.use(app.router);
       return app.use(express.static(__dirname + '/../public'));
     });
-    app.configure('development', function() {
+    app.configure('test', function() {
       app.use(express.logger());
-      return app.use(express.errorHandler({
+      app.use(express.errorHandler({
         dumpExceptions: true,
         showStack: true
       }));
+      return app.set('redisdb', 2);
+    });
+    app.configure('development', function() {
+      app.use(express.logger());
+      app.use(express.errorHandler({
+        dumpExceptions: true,
+        showStack: true
+      }));
+      return app.set('redisdb', 1);
     });
     app.configure('production', function() {
-      return app.use(express.errorHandler());
+      app.use(express.logger());
+      app.use(express.errorHandler());
+      return app.set('redisdb', 0);
     });
     return app.dynamicHelpers({
       session: function(req, res) {
