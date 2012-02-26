@@ -19,11 +19,8 @@ html
     script(type='text/javascript', src='scripts/lib/backbone.js')
     script(type='text/javascript', src='/all.js')
 
-    // templates
-    script(type='text/x-jquery-tmpl', id='item-template')
-      span.item-date ${date} 
-      input.repost(type='button', value='repost')
-      input.delete(type='button', value='delete')
-      span.item-text ${text}
+    include tmpl/item
+    include tmpl/main
+    include tmpl/login
 
   body!= body

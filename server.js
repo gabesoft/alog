@@ -1,9 +1,7 @@
 (function() {
-  var app, bundle, express, port, routes;
+  var app, bundle, express, port;
 
   express = require('express');
-
-  routes = require('./routes');
 
   app = module.exports = express.createServer();
 

@@ -1,17 +1,15 @@
 (function() {
-  var model, view;
+  var model, router, view;
 
   model = require('./model/itemlist.js');
 
   view = require('./view/logbook.js');
 
+  router = require('./router.js');
+
   jQuery(function() {
-    var items, itemsView;
-    items = new model.ItemList();
-    return itemsView = new view.LogBook({
-      model: items,
-      el: $('#content')
-    });
+    new router.Router();
+    return Backbone.history.start();
   });
 
 }).call(this);

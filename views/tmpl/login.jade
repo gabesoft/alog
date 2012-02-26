@@ -1,0 +1,9 @@
+script(type='text/x-jquery-tmpl', id='login-template')
+  div#login.sixteen.columns.login
+    fieldset
+      span.info ${message}
+      span.error ${error}
+
+      input(type='text', name='username', placeholder='username')
+      input(type='password', name='userpass', placeholder='password')
+      input(type='button', name='submit', value='login')
