@@ -32,9 +32,7 @@ class exports.LogBook extends Backbone.View
     @
 
   addAll: () =>
-    model = @model
-    append = @append
-    _.delay (() -> model.each append), 10
+    @model.each @append
     @
 
   createOnEnter: (e, keyCode) ->
