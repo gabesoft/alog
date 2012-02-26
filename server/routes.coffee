@@ -42,3 +42,11 @@ module.exports = (app) ->
   app.delete '/items', (req, res) ->
     items.pop (item) ->
       res.send(item)
+
+  app.get '/login', (req, res) ->
+    res.render 'login', title: 'Log Book', info: 'Info', error: ''
+
+  app.post '/login', (req, res) ->
+    res.render 'login', title: 'Log Book', info: '', error: 'Error'
+
+

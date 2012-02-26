@@ -1,0 +1,13 @@
+div.container
+  div.title.sixteen.columns
+    h2= title
+  div.sixteen.columns.login
+    form(method='post', action='login')
+      fieldset
+        div.message
+          span.info= info
+          span.error= error
+
+        input(type='text', name='user[name]', placeholder='username')
+        input(type='password', name='user[pass]', placeholder='password')
+        input(type='submit', value='login')

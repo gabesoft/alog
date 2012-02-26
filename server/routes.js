@@ -43,9 +43,23 @@
         return res.send(item);
       });
     });
-    return app["delete"]('/items', function(req, res) {
+    app["delete"]('/items', function(req, res) {
       return items.pop(function(item) {
         return res.send(item);
+      });
+    });
+    app.get('/login', function(req, res) {
+      return res.render('login', {
+        title: 'Log Book',
+        info: 'Info',
+        error: ''
+      });
+    });
+    return app.post('/login', function(req, res) {
+      return res.render('login', {
+        title: 'Log Book',
+        info: '',
+        error: 'Error'
       });
     });
   };

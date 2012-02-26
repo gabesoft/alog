@@ -16,32 +16,16 @@
     }
 
     Router.prototype.routes = {
-      'login': 'login',
-      'main': 'main',
       '': 'main'
     };
 
     Router.prototype.main = function() {
-      var content, items, itemsView, tmpl;
-      tmpl = $('#main-template').template();
-      content = $('#content');
-      content.html($.tmpl(tmpl));
+      var items, itemsView;
       items = new model.ItemList();
       return itemsView = new view.LogBook({
         model: items,
         el: content
       });
-    };
-
-    Router.prototype.login = function() {
-      var content, data, tmpl;
-      tmpl = $('#login-template').template();
-      content = $('#content');
-      data = {
-        message: 'Enter your credentials',
-        error: 'Invalid password'
-      };
-      return content.html($.tmpl(tmpl, data));
     };
 
     return Router;

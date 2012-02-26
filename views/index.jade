@@ -1,5 +1,10 @@
-div#alog-app 
-  div.container
-    div.title.sixteen.columns
-      h2= title
-    div#content.content
+div.container
+  div.title.sixteen.columns
+    h2= title
+  div#content.content
+    div#center.sixteen.columns.center
+      div#create-item.create-item
+        input(id='add-item', placeholder='got something to log? (enter to add)', type='text')
+
+      div#items.items
+        ul#item-list.item-list
