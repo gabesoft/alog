@@ -1,6 +1,6 @@
-model = require('./model/item.js')
+model = require('./model/itemlist.js')
 view  = require('./view/logbook.js')
 
 jQuery ->
-  items = new model.Items()
+  items = new model.ItemList()
   itemsView = new view.LogBook model: items, el: $ '#content'

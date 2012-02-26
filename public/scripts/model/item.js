@@ -16,20 +16,4 @@
 
   })(Backbone.Model);
 
-  exports.Items = (function(_super) {
-
-    __extends(Items, _super);
-
-    function Items() {
-      Items.__super__.constructor.apply(this, arguments);
-    }
-
-    Items.prototype.url = '/items';
-
-    Items.prototype.model = exports.Item;
-
-    return Items;
-
-  })(Backbone.Collection);
-
 }).call(this);
