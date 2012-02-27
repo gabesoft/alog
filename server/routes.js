@@ -61,7 +61,7 @@
         title: 'Log Book'
       });
     });
-    return app.post('/login', function(req, res) {
+    app.post('/login', function(req, res) {
       var cred;
       cred = req.body.user;
       return users.authenticate(cred.name, cred.pass, function(user) {
@@ -74,6 +74,14 @@
             title: 'Log Book'
           });
         }
+      });
+    });
+    return app.post('/users', function(req, res) {
+      var cred;
+      cred = req.body.user;
+      return users.create(cred.name, cred.pass, function(user) {
+        req.session.user = user;
+        return res.redirect('/');
       });
     });
   };

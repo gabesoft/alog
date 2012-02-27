@@ -60,4 +60,9 @@ module.exports = (app) ->
         req.flash('warn', 'login failed')
         res.render 'login', title: 'Log Book'
 
-
+  # signup and login
+  app.post '/users', (req, res) ->
+    cred = req.body.user
+    users.create cred.name, cred.pass, (user) ->
+      req.session.user = user
+      res.redirect '/'

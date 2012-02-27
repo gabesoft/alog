@@ -1,4 +1,3 @@
-# TODO: mock redis
 redis = require('redis').createClient()
 items = require('../models/items.js')(redis)
 helper = require('./helper.js')(redis, items)
@@ -23,6 +22,7 @@ describe 'items', ->
   it 'should get a range of items', ->
     helper.addItem text: 'fst', date: new Date()
     helper.addItem text: 'snd', date: new Date()
+
     runs ->
       saved = false
       all = []

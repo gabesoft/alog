@@ -1,4 +1,4 @@
-module.exports = (redis, items) ->
+module.exports = (redis, items, users) ->
   reset: () ->
     redis.flushdb()
 

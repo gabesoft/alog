@@ -1,6 +1,6 @@
 (function() {
 
-  module.exports = function(redis, items) {
+  module.exports = function(redis, items, users) {
     return {
       reset: function() {
         return redis.flushdb();

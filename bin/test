@@ -1,0 +1,4 @@
+#!/bin/bash
+dir=`dirname $0`
+NODE_ENV=test $dir/../node_modules/expresso/bin/expresso -g $dir/../test/unit/*.js
+#NODE_ENV=test $dir/../node_modules/expresso/bin/expresso -g $dir/../test/integration/*.js
