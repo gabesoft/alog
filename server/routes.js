@@ -1,8 +1,8 @@
 (function() {
 
   module.exports = function(app) {
-    var authenticate, createRedisClient, items, redis, redisClient, title, url, users;
-    title = 'Log Book';
+    var TITLE, authenticate, createRedisClient, items, redis, redisClient, render, url, users;
+    TITLE = 'Log Book';
     redis = require('redis');
     url = require('url');
     createRedisClient = function() {
@@ -34,10 +34,15 @@
         return res.redirect('/login');
       }
     };
-    app.get('/', authenticate, function(req, res) {
-      return res.render('index', {
-        title: title
+    render = function(res, page, layout, title) {
+      layout = layout || 'main';
+      return res.render(page, {
+        title: title || TITLE,
+        layout: "layouts/" + layout
       });
+    };
+    app.get('/', authenticate, function(req, res) {
+      return render(res, 'index');
     });
     app.get('/items', authenticate, function(req, res) {
       var limit, start;
@@ -58,18 +63,14 @@
       });
     });
     app.get('/signup', function(req, res) {
-      return res.render('signup', {
-        title: "" + title + " - Signup"
-      });
+      return render(res, 'signup', 'login', "" + TITLE + " - Signup");
     });
     app.get('/logout', function(req, res) {
       req.session.user = null;
       return res.redirect('/login');
     });
     app.get('/login', function(req, res) {
-      return res.render('login', {
-        title: "" + title + " - Login"
-      });
+      return render(res, 'login', 'login', "" + TITLE + " - Login");
     });
     app.post('/login', function(req, res) {
       var cred;
@@ -80,9 +81,7 @@
           return res.redirect('/');
         } else {
           req.flash('warn', 'login failed');
-          return res.render('login', {
-            title: title
-          });
+          return res.redirect('/login');
         }
       });
     });

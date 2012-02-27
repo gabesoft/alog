@@ -1,5 +1,5 @@
 module.exports = (app) ->
-  title = 'Log Book'
+  TITLE = 'Log Book'
   redis = require('redis')
   url   = require('url')
 
@@ -28,8 +28,14 @@ module.exports = (app) ->
   authenticate = (req, res, next) ->
     if req.session.user then next() else res.redirect('/login')
 
+  render = (res, page, layout, title) ->
+    layout = layout or 'main'
+    res.render page,
+      title: title or TITLE
+      layout: "layouts/#{layout}"
+      
   app.get '/', authenticate, (req, res) ->
-    res.render 'index', title: title
+    render res, 'index'
 
   # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
   # /items?start=0&limit=0 - returns all records
@@ -49,14 +55,14 @@ module.exports = (app) ->
       res.send(item)
 
   app.get '/signup', (req, res) ->
-    res.render 'signup', title: "#{title} - Signup"
+    render res, 'signup', 'login', "#{TITLE} - Signup"
 
   app.get '/logout', (req, res) ->
     req.session.user = null
     res.redirect '/login'
 
   app.get '/login', (req, res) ->
-    res.render 'login', title: "#{title} - Login"
+    render res, 'login', 'login', "#{TITLE} - Login"
 
   app.post '/login', (req, res) ->
     cred = req.body.user
@@ -66,7 +72,7 @@ module.exports = (app) ->
         res.redirect '/'
       else
         req.flash('warn', 'login failed')
-        res.render 'login', title: title
+        res.redirect '/login'
 
   # signup and login
   app.post '/users', (req, res) ->

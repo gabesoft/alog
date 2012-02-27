@@ -1,0 +1,24 @@
+!!!
+html
+  head
+    title= title
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+
+    link(rel='stylesheet', href='/stylesheets/base.css')
+    link(rel='stylesheet', href='/stylesheets/skeleton.css')
+    link(rel='stylesheet', href='/stylesheets/layout.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
+    // -TODO: bundle all javascripts
+    script(type='text/javascript', src='scripts/lib/jquery-1.7.1.js')
+    script(type='text/javascript', src='scripts/lib/jquery.tmpl.js')
+    script(type='text/javascript', src='scripts/lib/json2.js')
+    script(type='text/javascript', src='scripts/lib/date-format.js')
+    script(type='text/javascript', src='scripts/lib/underscore.js')
+    script(type='text/javascript', src='scripts/lib/backbone.js')
+
+    script(type='text/javascript', src='/all.js')
+
+    include ../tmpl/item
+
+  body!= body
