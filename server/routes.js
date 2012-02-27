@@ -1,7 +1,8 @@
 (function() {
 
   module.exports = function(app) {
-    var authenticate, createRedisClient, items, redis, redisClient, url, users;
+    var authenticate, createRedisClient, items, redis, redisClient, title, url, users;
+    title = 'Log Book';
     redis = require('redis');
     url = require('url');
     createRedisClient = function() {
@@ -35,7 +36,7 @@
     };
     app.get('/', authenticate, function(req, res) {
       return res.render('index', {
-        title: 'Log Book'
+        title: title
       });
     });
     app.get('/items', authenticate, function(req, res) {
@@ -56,9 +57,18 @@
         return res.send(item);
       });
     });
+    app.get('/signup', function(req, res) {
+      return res.render('signup', {
+        title: "" + title + " - Signup"
+      });
+    });
+    app.get('/logout', function(req, res) {
+      req.session.user = null;
+      return res.redirect('/login');
+    });
     app.get('/login', function(req, res) {
       return res.render('login', {
-        title: 'Log Book'
+        title: "" + title + " - Login"
       });
     });
     app.post('/login', function(req, res) {
@@ -71,7 +81,7 @@
         } else {
           req.flash('warn', 'login failed');
           return res.render('login', {
-            title: 'Log Book'
+            title: title
           });
         }
       });
@@ -79,10 +89,26 @@
     return app.post('/users', function(req, res) {
       var cred;
       cred = req.body.user;
-      return users.create(cred.name, cred.pass, function(user) {
-        req.session.user = user;
-        return res.redirect('/');
-      });
+      if (cred.name === '') {
+        req.flash('warn', "The user name cannot be blank");
+        return res.redirect('/signup');
+      } else if (cred.pass === '') {
+        req.flash('warn', "Blank passwords are not allowed");
+        return res.redirect('/signup');
+      } else if (cred.pass !== cred.pass2) {
+        req.flash('warn', "Passwords don't match");
+        return res.redirect('/signup');
+      } else {
+        return users.create(cred.name, cred.pass, function(err, user) {
+          if (err != null) {
+            req.flash('warn', err.message);
+            return res.redirect('/signup');
+          } else {
+            req.session.user = user;
+            return res.redirect('/');
+          }
+        });
+      }
     });
   };
 

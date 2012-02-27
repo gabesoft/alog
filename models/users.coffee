@@ -12,12 +12,15 @@ module.exports = (redis) ->
 
   authenticate: (name, pass, callback) ->
     redis.get name, (err, res) ->
-      user = JSON.parse res
-      auth = encrypt pass, user.salt
-      if user.pass == auth
-        callback?(user)
+      if not res?
+        callback(null)
       else
-        callback?(null)
+        user = JSON.parse res
+        auth = encrypt pass, user.salt
+        if user.pass == auth
+          callback?(user)
+        else
+          callback?(null)
 
   create: (name, pass, callback) ->
     redis.sadd namesKey, name, (err, res) ->

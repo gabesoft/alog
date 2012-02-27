@@ -1,4 +1,5 @@
 module.exports = (app) ->
+  title = 'Log Book'
   redis = require('redis')
   url   = require('url')
 
@@ -28,7 +29,7 @@ module.exports = (app) ->
     if req.session.user then next() else res.redirect('/login')
 
   app.get '/', authenticate, (req, res) ->
-    res.render 'index', title: 'Log Book'
+    res.render 'index', title: title
 
   # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
   # /items?start=0&limit=0 - returns all records
@@ -47,8 +48,15 @@ module.exports = (app) ->
     items.pop (item) ->
       res.send(item)
 
+  app.get '/signup', (req, res) ->
+    res.render 'signup', title: "#{title} - Signup"
+
+  app.get '/logout', (req, res) ->
+    req.session.user = null
+    res.redirect '/login'
+
   app.get '/login', (req, res) ->
-    res.render 'login', title: 'Log Book'
+    res.render 'login', title: "#{title} - Login"
 
   app.post '/login', (req, res) ->
     cred = req.body.user
@@ -58,11 +66,26 @@ module.exports = (app) ->
         res.redirect '/'
       else
         req.flash('warn', 'login failed')
-        res.render 'login', title: 'Log Book'
+        res.render 'login', title: title
 
   # signup and login
   app.post '/users', (req, res) ->
     cred = req.body.user
-    users.create cred.name, cred.pass, (user) ->
-      req.session.user = user
-      res.redirect '/'
+
+    if cred.name == ''
+      req.flash 'warn', "The user name cannot be blank"
+      res.redirect '/signup'
+    else if cred.pass == ''
+      req.flash 'warn', "Blank passwords are not allowed"
+      res.redirect '/signup'
+    else if cred.pass != cred.pass2
+      req.flash 'warn', "Passwords don't match"
+      res.redirect '/signup'
+    else
+      users.create cred.name, cred.pass, (err, user) ->
+        if err?
+          req.flash 'warn', err.message
+          res.redirect '/signup'
+        else
+          req.session.user = user
+          res.redirect '/'

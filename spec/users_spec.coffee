@@ -79,6 +79,22 @@ describe 'users', ->
       runs ->
         expect(user).toBeNull()
 
+  it 'should fail to authenticate an invalid user name', () ->
+    name = 'a@b.com'
+    pass = 'secret'
+    data = null
+
+    create name, pass, (d) -> data = d
+    waitsFor () -> data?
+
+    runs ->
+      user = {}
+      users.authenticate 'invalid', pass, (d) -> user = d
+      waitsFor () -> not user?
+      
+      runs ->
+        expect(user).toBeNull()
+
   it 'should get a user by name', () ->
     name = 'a@b.com'
     pass = 'secret'

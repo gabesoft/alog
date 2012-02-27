@@ -1,0 +1,15 @@
+div.container
+  div.title.sixteen.columns
+    h2= title
+  div.sixteen.columns.login
+    form(method='post', action='users')
+      fieldset
+        div.message
+          span.info= flash.info
+          span.warn= flash.warn
+
+        input(type='text', name='user[name]', placeholder='username')
+        input(type='password', name='user[pass]', placeholder='password')
+        input(type='password', name='user[pass2]', placeholder='password - again')
+        input(type='submit', value='create')
+

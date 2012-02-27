@@ -17,12 +17,16 @@
       authenticate: function(name, pass, callback) {
         return redis.get(name, function(err, res) {
           var auth, user;
-          user = JSON.parse(res);
-          auth = encrypt(pass, user.salt);
-          if (user.pass === auth) {
-            return typeof callback === "function" ? callback(user) : void 0;
+          if (!(res != null)) {
+            return callback(null);
           } else {
-            return typeof callback === "function" ? callback(null) : void 0;
+            user = JSON.parse(res);
+            auth = encrypt(pass, user.salt);
+            if (user.pass === auth) {
+              return typeof callback === "function" ? callback(user) : void 0;
+            } else {
+              return typeof callback === "function" ? callback(null) : void 0;
+            }
           }
         });
       },

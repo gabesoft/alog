@@ -118,6 +118,31 @@
         });
       });
     });
+    it('should fail to authenticate an invalid user name', function() {
+      var data, name, pass;
+      name = 'a@b.com';
+      pass = 'secret';
+      data = null;
+      create(name, pass, function(d) {
+        return data = d;
+      });
+      waitsFor(function() {
+        return data != null;
+      });
+      return runs(function() {
+        var user;
+        user = {};
+        users.authenticate('invalid', pass, function(d) {
+          return user = d;
+        });
+        waitsFor(function() {
+          return !(user != null);
+        });
+        return runs(function() {
+          return expect(user).toBeNull();
+        });
+      });
+    });
     it('should get a user by name', function() {
       var data, name, pass;
       name = 'a@b.com';
