@@ -22,11 +22,20 @@ module.exports = (app) ->
   redisClient = createRedisClient();
   redisClient.on('error', (e) -> console.log e)
 
-  items = require('../models/items.js')(redisClient)
-  users = require('../models/users.js')(redisClient)
+  itemsModule = require('../models/items.js')(redisClient)
 
+  users = require('../models/users.js')(redisClient)
+  items = null
+
+  # TODO: move all authentication/user logic to its own module
   authenticate = (req, res, next) ->
-    if req.session.user then next() else res.redirect('/login')
+    if req.session.user
+      items = itemsModule.create(req.session.user)
+      next()
+    else
+      res.redirect('/login')
+
+  
 
   render = (res, page, layout, title) ->
     res.render page,

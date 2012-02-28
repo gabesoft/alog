@@ -1,7 +1,7 @@
 (function() {
 
   module.exports = function(app) {
-    var TITLE, authenticate, createRedisClient, items, redis, redisClient, render, url, users;
+    var TITLE, authenticate, createRedisClient, items, itemsModule, redis, redisClient, render, url, users;
     TITLE = 'Log Book';
     redis = require('redis');
     url = require('url');
@@ -25,10 +25,12 @@
     redisClient.on('error', function(e) {
       return console.log(e);
     });
-    items = require('../models/items.js')(redisClient);
+    itemsModule = require('../models/items.js')(redisClient);
     users = require('../models/users.js')(redisClient);
+    items = null;
     authenticate = function(req, res, next) {
       if (req.session.user) {
+        items = itemsModule.create(req.session.user);
         return next();
       } else {
         return res.redirect('/login');

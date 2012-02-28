@@ -3,108 +3,145 @@
 
   redis = require('redis').createClient();
 
-  items = require('../models/items.js')(redis);
+  items = require('../models/items.js')(redis).create({
+    name: 'test'
+  });
 
-  helper = require('./helper.js')(redis, items);
+  helper = require('./helper.js')(redis);
 
   describe('items', function() {
+    var add;
     beforeEach(function() {
       return helper.reset();
     });
-    it('should add new item and set the id', function() {
-      var item, saved;
-      item = {
-        text: 'first',
+    add = function(name, callback) {
+      return items.add({
+        name: name,
         date: new Date()
-      };
-      saved = false;
-      items.add(item, function(updated) {
-        return saved = true;
+      }, callback);
+    };
+    it('should add new item and set the id', function() {
+      var item;
+      item = null;
+      add('item', function(e) {
+        return item = e;
       });
       waitsFor(function() {
-        return saved;
+        return item != null;
       });
       return runs(function() {
         return expect(item.id).toBeDefined();
       });
     });
     it('should get a range of items', function() {
-      helper.addItem({
-        text: 'fst',
-        date: new Date()
+      var fst, snd;
+      fst = null;
+      snd = null;
+      add('fst', function(e) {
+        return fst = e;
       });
-      helper.addItem({
-        text: 'snd',
-        date: new Date()
+      waitsFor(function() {
+        return fst != null;
       });
       return runs(function() {
-        var all, saved;
-        saved = false;
-        all = [];
-        items.get(0, 5, function(list) {
-          saved = true;
-          return all = list;
+        add('snd', function(e) {
+          return snd = e;
         });
         waitsFor(function() {
-          return saved;
+          return snd != null;
         });
         return runs(function() {
-          return expect(all.length).toEqual(2);
+          var all, saved;
+          saved = false;
+          all = [];
+          items.get(0, 5, function(list) {
+            saved = true;
+            return all = list;
+          });
+          waitsFor(function() {
+            return saved;
+          });
+          return runs(function() {
+            return expect(all.length).toEqual(2);
+          });
         });
       });
     });
     it('should get all items', function() {
-      helper.addItem({
-        text: 'fst',
-        date: new Date()
+      var fst, snd;
+      fst = null;
+      snd = null;
+      add('fst', function(e) {
+        return fst = e;
       });
-      helper.addItem({
-        text: 'snd',
-        date: new Date()
+      waitsFor(function() {
+        return fst != null;
       });
       return runs(function() {
-        var all, saved;
-        saved = false;
-        all = [];
-        items.get(0, -1, function(list) {
-          saved = true;
-          return all = list;
+        add('snd', function(e) {
+          return snd = e;
         });
         waitsFor(function() {
-          return saved;
+          return snd != null;
         });
         return runs(function() {
-          return expect(all.length).toEqual(2);
+          var all, saved;
+          saved = false;
+          all = [];
+          items.get(0, -1, function(list) {
+            saved = true;
+            return all = list;
+          });
+          waitsFor(function() {
+            return saved;
+          });
+          return runs(function() {
+            return expect(all.length).toEqual(2);
+          });
         });
       });
     });
     return it('should get items count', function() {
-      helper.addItem({
-        text: 'fst',
-        date: new Date()
+      var fst, snd, trd;
+      fst = null;
+      snd = null;
+      trd = null;
+      add('fst', function(e) {
+        return fst = e;
       });
-      helper.addItem({
-        text: 'snd',
-        date: new Date()
-      });
-      helper.addItem({
-        text: 'trd',
-        date: new Date()
+      waitsFor(function() {
+        return fst != null;
       });
       return runs(function() {
-        var count, run;
-        run = false;
-        count = -1;
-        items.len(function(len) {
-          run = true;
-          return count = len;
+        add('snd', function(e) {
+          return snd = e;
         });
         waitsFor(function() {
-          return run;
+          return snd != null;
         });
         return runs(function() {
-          console.log(count);
-          return expect(count).toEqual(3);
+          add('trd', function(e) {
+            return trd = e;
+          });
+          waitsFor(function() {
+            return trd != null;
+          });
+          return runs(function() {
+            var count, run;
+            run = false;
+            count = -1;
+            items.len(function(len) {
+              run = true;
+              return count = len;
+            });
+            waitsFor(function() {
+              return run;
+            });
+            return runs(function() {
+              console.log(count);
+              return expect(count).toEqual(3);
+            });
+          });
         });
       });
     });

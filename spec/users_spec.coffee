@@ -1,7 +1,6 @@
 redis = require('redis').createClient()
-items = require('../models/items.js')(redis)
 users = require('../models/users.js')(redis)
-helper = require('./helper.js')(redis, items, users)
+helper = require('./helper.js')(redis)
 
 describe 'users', ->
   mkuser = (err, user) ->
@@ -12,9 +11,7 @@ describe 'users', ->
     users.create name, pass, (err, user) ->
       callback (mkuser err, user)
         
-
-  beforeEach () ->
-    helper.reset()
+  beforeEach helper.reset
 
   it 'should create a new user', () ->
     name = 'jon@email.com'

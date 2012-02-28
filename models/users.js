@@ -4,9 +4,11 @@
   crypto = require('crypto');
 
   module.exports = function(redis) {
-    var emailLookupKey, encrypt, mksalt, namesKey;
+    var encrypt, mksalt, namesKey, usersKey;
     namesKey = 'usernames';
-    emailLookupKey = 'users:lookup:email';
+    usersKey = function(name) {
+      return "users:" + name;
+    };
     encrypt = function(text, salt) {
       return crypto.createHmac('sha1', salt).update(text).digest('hex');
     };
@@ -15,7 +17,9 @@
     };
     return {
       authenticate: function(name, pass, callback) {
-        return redis.get(name, function(err, res) {
+        var key;
+        key = usersKey(name);
+        return redis.get(key, function(err, res) {
           var auth, user;
           if (!(res != null)) {
             return callback(null);
@@ -32,7 +36,7 @@
       },
       create: function(name, pass, callback) {
         return redis.sadd(namesKey, name, function(err, res) {
-          var salt, user;
+          var key, salt, user;
           if (res === 0) {
             return typeof callback === "function" ? callback(new Error("A user with name " + name + " already exists"), null) : void 0;
           } else {
@@ -42,14 +46,18 @@
               salt: salt,
               pass: encrypt(pass, salt)
             };
-            return redis.set(user.name, JSON.stringify(user), function(err, res) {
+            key = usersKey(user.name);
+            return redis.set(key, JSON.stringify(user), function(err, res) {
               return typeof callback === "function" ? callback(null, user) : void 0;
             });
           }
         });
       },
       get: function(name, callback) {
-        return redis.get(name, function(err, res) {
+        var key;
+        key = usersKey(name);
+        console.log(key);
+        return redis.get(key, function(err, res) {
           return typeof callback === "function" ? callback(JSON.parse(res)) : void 0;
         });
       }

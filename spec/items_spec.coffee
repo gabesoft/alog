@@ -1,70 +1,93 @@
 redis = require('redis').createClient()
-items = require('../models/items.js')(redis)
-helper = require('./helper.js')(redis, items)
+items = require('../models/items.js')(redis).create(name: 'test')
+helper = require('./helper.js')(redis)
 
 describe 'items', ->
   beforeEach () ->
     helper.reset()
 
-  it 'should add new item and set the id', ->
-    item = 
-      text: 'first'
-      date: new Date()
-    saved = false
+  add = (name, callback) ->
+    items.add { name: name, date: new Date() }, callback
 
-    items.add item, (updated) ->
-      saved = true
-      
-    waitsFor(() -> saved)
+  it 'should add new item and set the id', ->
+    item = null
+    add 'item', (e) -> item = e
+
+    waitsFor () -> item?
     runs ->
       expect(item.id).toBeDefined()
 
   it 'should get a range of items', ->
-    helper.addItem text: 'fst', date: new Date()
-    helper.addItem text: 'snd', date: new Date()
+    fst = null
+    snd = null
+
+    add 'fst', (e) -> fst = e
+    waitsFor () -> fst?
 
     runs ->
-      saved = false
-      all = []
+      add 'snd', (e) -> snd = e
+      waitsFor () -> snd?
 
-      items.get 0, 5, (list) ->
-        saved = true
-        all   = list
-
-      waitsFor () -> saved
       runs ->
-        expect(all.length).toEqual(2)
+        saved = false
+        all = []
+
+        items.get 0, 5, (list) ->
+          saved = true
+          all   = list
+
+        waitsFor () -> saved
+        runs ->
+          expect(all.length).toEqual(2)
 
   it 'should get all items', ->
-    helper.addItem text: 'fst', date: new Date()
-    helper.addItem text: 'snd', date: new Date()
+    fst = null
+    snd = null
+
+    add 'fst', (e) -> fst = e
+    waitsFor () -> fst?
 
     runs ->
-      saved = false
-      all = []
+      add 'snd', (e) -> snd = e
+      waitsFor () -> snd?
 
-      items.get 0, -1, (list) ->
-        saved = true
-        all   = list
-
-      waitsFor () -> saved
       runs ->
-        expect(all.length).toEqual(2)
+        saved = false
+        all = []
+
+        items.get 0, -1, (list) ->
+          saved = true
+          all   = list
+
+        waitsFor () -> saved
+        runs ->
+          expect(all.length).toEqual(2)
 
   it 'should get items count', ->
-    helper.addItem text: 'fst', date: new Date()
-    helper.addItem text: 'snd', date: new Date()
-    helper.addItem text: 'trd', date: new Date()
+    fst = null
+    snd = null
+    trd = null
+
+    add 'fst', (e) -> fst = e
+    waitsFor () -> fst?
 
     runs ->
-      run = false
-      count = -1
+      add 'snd', (e) -> snd = e
+      waitsFor () -> snd?
 
-      items.len (len) ->
-        run = true
-        count = len
-
-      waitsFor ()-> run
       runs ->
-        console.log(count)
-        expect(count).toEqual(3)
+        add 'trd', (e) -> trd = e
+        waitsFor () -> trd?
+
+        runs ->
+          run = false
+          count = -1
+
+          items.len (len) ->
+            run = true
+            count = len
+
+          waitsFor ()-> run
+          runs ->
+            console.log(count)
+            expect(count).toEqual(3)

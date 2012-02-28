@@ -2,7 +2,8 @@ crypto = require('crypto')
 
 module.exports = (redis) ->
   namesKey = 'usernames'
-  emailLookupKey = 'users:lookup:email'
+  usersKey = (name) ->
+    "users:#{name}"
   
   encrypt = (text, salt) ->
     crypto.createHmac('sha1', salt).update(text).digest('hex')
@@ -11,7 +12,8 @@ module.exports = (redis) ->
     Math.round(new Date().valueOf() * Math.random()) + ''
 
   authenticate: (name, pass, callback) ->
-    redis.get name, (err, res) ->
+    key = usersKey name
+    redis.get key, (err, res) ->
       if not res?
         callback(null)
       else
@@ -32,9 +34,12 @@ module.exports = (redis) ->
           name: name
           salt: salt
           pass: encrypt(pass, salt)
-        redis.set user.name, JSON.stringify(user), (err, res) ->
+        key = usersKey user.name
+        redis.set key, JSON.stringify(user), (err, res) ->
           callback?(null, user)
 
   get: (name, callback) ->
-    redis.get name, (err, res) ->
+    key = usersKey name
+    console.log key
+    redis.get key, (err, res) ->
       callback?(JSON.parse res)
