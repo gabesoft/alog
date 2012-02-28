@@ -18,7 +18,13 @@
     it('should save a token', function() {
       return 0;
     });
-    return it('should get a token', function() {
+    it('should get a token', function() {
+      return 0;
+    });
+    it('should verify a valid token', function() {
+      return 0;
+    });
+    return it('should fail to verify an invalid token', function() {
       return 0;
     });
   });

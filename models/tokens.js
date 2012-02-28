@@ -1,19 +1,19 @@
 (function() {
-  var mktoken, reset;
+  var mkkey, mktoken;
 
   mktoken = function() {
     return Math.round(new Date().valueOf() * Math.random()) + '';
   };
 
-  reset = function(token) {
-    return token.token = mktoken();
+  mkkey = function(token) {
+    return "" + token.name + ":" + token.id;
   };
 
   module.exports = function(redis) {
     return {
       save: function(token, callback) {
-        reset(token);
-        return redis.set("" + token.name + ":" + token.id, JSON.stringify(token), function(err, res) {
+        token.token = mktoken();
+        return redis.set(mkkey(token), JSON.stringify(token), function(err, res) {
           return callback(token);
         });
       },
@@ -23,6 +23,15 @@
           id: mktoken(),
           token: mktoken()
         };
+      },
+      verify: function(token, callback) {
+        return redis.get(mkkey(token), function(err, res) {
+          if ((res != null ? res.token : void 0) === token.token) {
+            return callback(res);
+          } else {
+            return callback(null);
+          }
+        });
       },
       parse: JSON.parse,
       stringify: JSON.stringify

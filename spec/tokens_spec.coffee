@@ -16,3 +16,10 @@ describe 'tokens', ->
 
   it 'should get a token', () ->
     0
+
+  it 'should verify a valid token', () ->
+    0
+
+  it 'should fail to verify an invalid token', () ->
+    0
+    

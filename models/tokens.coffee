@@ -1,13 +1,13 @@
 mktoken = () ->
   Math.round(new Date().valueOf() * Math.random()) + ''
 
-reset = (token) ->
-  token.token = mktoken()
+mkkey = (token) ->
+  "#{token.name}:#{token.id}"
 
 module.exports = (redis) ->
   save: (token, callback) ->
-    reset token
-    redis.set "#{token.name}:#{token.id}", JSON.stringify(token), (err, res) ->
+    token.token = mktoken()
+    redis.set (mkkey token), (JSON.stringify token), (err, res) ->
       callback(token)
 
   create: (username, callback) ->
@@ -15,5 +15,12 @@ module.exports = (redis) ->
     id    : mktoken()
     token : mktoken()
 
+  verify: (token, callback) ->
+    redis.get (mkkey token), (err, res) ->
+      if res?.token == token.token
+        callback(res)
+      else
+        callback(null)
+  
   parse: JSON.parse
   stringify: JSON.stringify
