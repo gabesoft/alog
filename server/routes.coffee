@@ -29,13 +29,13 @@ module.exports = (app) ->
     if req.session.user then next() else res.redirect('/login')
 
   render = (res, page, layout, title) ->
-    layout = layout or 'main'
     res.render page,
-      title: title or TITLE
+      title: TITLE
+      titleInfo: title
       layout: "layouts/#{layout}"
       
   app.get '/', authenticate, (req, res) ->
-    render res, 'index'
+    render res, 'index', 'main', req.session.user.name
 
   # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
   # /items?start=0&limit=0 - returns all records
@@ -55,14 +55,14 @@ module.exports = (app) ->
       res.send(item)
 
   app.get '/signup', (req, res) ->
-    render res, 'signup', 'login', "#{TITLE} - Signup"
+    render res, 'signup', 'login', 'Signup'
 
   app.get '/logout', (req, res) ->
     req.session.user = null
     res.redirect '/login'
 
   app.get '/login', (req, res) ->
-    render res, 'login', 'login', "#{TITLE} - Login"
+    render res, 'login', 'login', 'Login'
 
   app.post '/login', (req, res) ->
     cred = req.body.user

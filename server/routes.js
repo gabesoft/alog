@@ -35,14 +35,14 @@
       }
     };
     render = function(res, page, layout, title) {
-      layout = layout || 'main';
       return res.render(page, {
-        title: title || TITLE,
+        title: TITLE,
+        titleInfo: title,
         layout: "layouts/" + layout
       });
     };
     app.get('/', authenticate, function(req, res) {
-      return render(res, 'index');
+      return render(res, 'index', 'main', req.session.user.name);
     });
     app.get('/items', authenticate, function(req, res) {
       var limit, start;
@@ -63,14 +63,14 @@
       });
     });
     app.get('/signup', function(req, res) {
-      return render(res, 'signup', 'login', "" + TITLE + " - Signup");
+      return render(res, 'signup', 'login', 'Signup');
     });
     app.get('/logout', function(req, res) {
       req.session.user = null;
       return res.redirect('/login');
     });
     app.get('/login', function(req, res) {
-      return render(res, 'login', 'login', "" + TITLE + " - Login");
+      return render(res, 'login', 'login', 'Login');
     });
     app.post('/login', function(req, res) {
       var cred;

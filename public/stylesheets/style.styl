@@ -48,11 +48,26 @@ body
   background #575859
   top-linear-background(#575859, #272425)
 
-.title h2
-  color #ffffff
-  text-shadow 0 1px 1px #000000
-  margin 0 10px
-  padding 2px
+.title
+  font-weight bold
+  font-size 18pt
+  text-shadow 0 1px 1px #cccccc
+  color #fffef7
+
+.title span
+  display inline-block
+  padding-bottom 5px
+
+.title span.main
+  padding-left 5px
+
+.title span.info
+  padding-right 5px
+  float right
+
+.title span.info.user
+  text-decoration underline
+  cursor pointer
 
 .create-item input
   width 100%
@@ -119,6 +134,9 @@ body
 
 .login span.info
   color #6495ed
+
+.login a.signup
+  float right
 
 input::-webkit-input-placeholder
   font-style italic
