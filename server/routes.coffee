@@ -24,18 +24,14 @@ module.exports = (app) ->
 
   itemsModule = require('../models/items.js')(redisClient)
 
+  auth  = require('./auth')(app, redisClient)
   users = require('../models/users.js')(redisClient)
   items = null
 
-  # TODO: move all authentication/user logic to its own module
   authenticate = (req, res, next) ->
-    if req.session.user
+    auth.authenticate req, res, () ->
       items = itemsModule.create(req.session.user)
       next()
-    else
-      res.redirect('/login')
-
-  
 
   render = (res, page, layout, title) ->
     res.render page,
@@ -67,8 +63,8 @@ module.exports = (app) ->
     render res, 'signup', 'login', 'Signup'
 
   app.get '/logout', (req, res) ->
-    req.session.user = null
-    res.redirect '/login'
+    auth.logout req, res, () ->
+      res.redirect '/login'
 
   app.get '/login', (req, res) ->
     render res, 'login', 'login', 'Login'
@@ -82,11 +78,10 @@ module.exports = (app) ->
       else
         req.flash('warn', 'login failed')
         res.redirect '/login'
-
+  
   # signup and login
   app.post '/users', (req, res) ->
     cred = req.body.user
-
     if cred.name == ''
       req.flash 'warn', "The user name cannot be blank"
       res.redirect '/signup'
@@ -97,10 +92,6 @@ module.exports = (app) ->
       req.flash 'warn', "Passwords don't match"
       res.redirect '/signup'
     else
-      users.create cred.name, cred.pass, (err, user) ->
-        if err?
-          req.flash 'warn', err.message
-          res.redirect '/signup'
-        else
-          req.session.user = user
-          res.redirect '/'
+      console.log 'auth', auth
+      auth.reset req, res, () ->
+        res.redirect '/'

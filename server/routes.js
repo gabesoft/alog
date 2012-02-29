@@ -1,7 +1,7 @@
 (function() {
 
   module.exports = function(app) {
-    var TITLE, authenticate, createRedisClient, items, itemsModule, redis, redisClient, render, url, users;
+    var TITLE, auth, authenticate, createRedisClient, items, itemsModule, redis, redisClient, render, url, users;
     TITLE = 'Log Book';
     redis = require('redis');
     url = require('url');
@@ -26,15 +26,14 @@
       return console.log(e);
     });
     itemsModule = require('../models/items.js')(redisClient);
+    auth = require('./auth')(app, redisClient);
     users = require('../models/users.js')(redisClient);
     items = null;
     authenticate = function(req, res, next) {
-      if (req.session.user) {
+      return auth.authenticate(req, res, function() {
         items = itemsModule.create(req.session.user);
         return next();
-      } else {
-        return res.redirect('/login');
-      }
+      });
     };
     render = function(res, page, layout, title) {
       return res.render(page, {
@@ -68,8 +67,9 @@
       return render(res, 'signup', 'login', 'Signup');
     });
     app.get('/logout', function(req, res) {
-      req.session.user = null;
-      return res.redirect('/login');
+      return auth.logout(req, res, function() {
+        return res.redirect('/login');
+      });
     });
     app.get('/login', function(req, res) {
       return render(res, 'login', 'login', 'Login');
@@ -100,14 +100,9 @@
         req.flash('warn', "Passwords don't match");
         return res.redirect('/signup');
       } else {
-        return users.create(cred.name, cred.pass, function(err, user) {
-          if (err != null) {
-            req.flash('warn', err.message);
-            return res.redirect('/signup');
-          } else {
-            req.session.user = user;
-            return res.redirect('/');
-          }
+        console.log('auth', auth);
+        return auth.reset(req, res, function() {
+          return res.redirect('/');
         });
       }
     });

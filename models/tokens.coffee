@@ -8,22 +8,22 @@ module.exports = (redis) ->
   save: (token, callback) ->
     token.token = mktoken()
     redis.set (mkkey token), (JSON.stringify token), (err, res) ->
-      callback(token)
+      callback token
   
   remove: (token, callback) ->
-    # todo implement
-    0
+    redis.del (mkkey token), (err, count) ->
+      callback count
 
   create: (username) ->
-    console.log 'creating'
     name  : username
     id    : mktoken()
     token : mktoken()
 
   verify: (token, callback) ->
     redis.get (mkkey token), (err, res) ->
-      if res?.token == token.token
-        callback(res)
+      saved = JSON.parse res
+      if saved.token == token.token
+        callback(saved)
       else
         callback(null)
   

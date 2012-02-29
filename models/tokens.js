@@ -18,10 +18,11 @@
         });
       },
       remove: function(token, callback) {
-        return 0;
+        return redis.del(mkkey(token), function(err, count) {
+          return callback(count);
+        });
       },
       create: function(username) {
-        console.log('creating');
         return {
           name: username,
           id: mktoken(),
@@ -30,8 +31,10 @@
       },
       verify: function(token, callback) {
         return redis.get(mkkey(token), function(err, res) {
-          if ((res != null ? res.token : void 0) === token.token) {
-            return callback(res);
+          var saved;
+          saved = JSON.parse(res);
+          if (saved.token === token.token) {
+            return callback(saved);
           } else {
             return callback(null);
           }

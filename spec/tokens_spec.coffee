@@ -12,22 +12,63 @@ describe 'tokens', ->
     helper.closeDb()
   
   it 'should create a new token', () ->
-    console.log 'start'
-    name = 'jean'
+    name  = 'jean'
     token = tokens.create name
     expect(token.name).toEqual name
 
   #it 'should reset a token', () ->
     #0
 
-  #it 'should save a token', () ->
-    #0
+  it 'should save a token', () ->
+    name  = 'tok'
+    token = tokens.create name
+    uniq  = token.token
 
-  #it 'should get a token', () ->
-    #0
+    saved = null
+    tokens.save token, (t) -> saved = t
+    waitsFor () -> saved?
 
-  #it 'should verify a valid token', () ->
-    #0
+    runs ->
+      expect(saved).toNotBe(null)
+      expect(saved.token).toNotBe(uniq)
 
-  #it 'should fail to verify an invalid token', () ->
-    #0
+  it 'should verify a token', () ->
+    name  = 'tok'
+    token = tokens.create name
+    uniq  = token.token
+    saved = null
+
+    tokens.save token, (t) -> saved = t
+    waitsFor () -> saved?
+
+    runs ->
+      verified = null
+
+      tokens.verify token, (t) -> verified = t
+      waitsFor () -> verified?
+
+      runs ->
+        invalid = {}
+        token.token = uniq
+        tokens.verify token, (t) -> invalid = t
+        waitsFor (() -> not invalid?)
+
+        runs ->
+          expect(verified).toNotBe(null)
+          expect(invalid).toBeNull()
+
+  it 'should delete a token', () ->
+    token = tokens.create 'test'
+    saved = null
+
+    tokens.save token, (t) -> saved = t
+    waitsFor () -> saved?
+
+    runs ->
+      count = null
+      tokens.remove token, (c) -> count = c
+      waitsFor () -> count?
+
+      runs ->
+        expect(count).toBe(1)
+    
