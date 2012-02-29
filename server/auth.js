@@ -6,7 +6,6 @@
     tokens = require('../models/tokens.js')(redis);
     users = require('../models/users.js')(redis);
     initContext = function(req, res, user, token, next) {
-      req.session.user = user;
       return tokens.save(token, function() {
         var opts;
         opts = {
@@ -14,6 +13,8 @@
           path: '/'
         };
         res.cookie(COOKIE, tokens.stringify(token), opts);
+        req.session.user = user;
+        console.log('saved', token);
         return next();
       });
     };
@@ -23,6 +24,7 @@
     return {
       authenticate: function(req, res, next) {
         var token;
+        console.log('auth', req.session.user, req.cookies[COOKIE]);
         if (req.session.user) {
           return next();
         } else if (req.cookies[COOKIE] != null) {

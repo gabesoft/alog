@@ -6,18 +6,20 @@ module.exports = (app, redis) ->
   # TODO: move cookie stuff to cookie helper
 
   initContext = (req, res, user, token, next) ->
-    req.session.user = user
     tokens.save token, () ->
       opts =
         expires: new Date(Date.now() + 2 * 604800000)
         path: '/'
       res.cookie COOKIE, (tokens.stringify token), opts
+      req.session.user = user
+      console.log 'saved', token
       next()
 
   toLogin = (res) ->
     res.redirect '/login'
 
   authenticate: (req, res, next) ->
+    console.log 'auth', req.session.user, req.cookies[COOKIE]
     if req.session.user
       next()
     else if req.cookies[COOKIE]?
