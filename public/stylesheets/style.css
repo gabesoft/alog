@@ -34,6 +34,9 @@ body {
   text-decoration: underline;
   cursor: pointer;
 }
+.title a {
+  color: #fffef7;
+}
 .create-item input {
   width: 100%;
   height: 40px;
