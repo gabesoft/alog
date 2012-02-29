@@ -3,16 +3,15 @@ module.exports = (app, redis) ->
   tokens = require('../models/tokens.js')(redis)
   users  = require('../models/users.js')(redis)
 
-  persist = (res, token) ->
-    opts =
-      expires: new Date(Date.now() + 2 * 604800000)
-      path: '/'
-    res.cookie COOKIE, (tokens.stringify token), opts
+  # TODO: move cookie stuff to cookie helper
 
   initContext = (req, res, user, token, next) ->
     req.session.user = user
     tokens.save token, () ->
-      persist res, token
+      opts =
+        expires: new Date(Date.now() + 2 * 604800000)
+        path: '/'
+      res.cookie COOKIE, (tokens.stringify token), opts
       next()
 
   toLogin = (res) ->
@@ -21,7 +20,7 @@ module.exports = (app, redis) ->
   authenticate: (req, res, next) ->
     if req.session.user
       next()
-    else if req.cookies.token?
+    else if req.cookies[COOKIE]?
       token = tokens.parse req.cookies[COOKIE]
       tokens.verify token, (verified) ->
         if verified?
@@ -36,12 +35,18 @@ module.exports = (app, redis) ->
       toLogin res
     
   logout: (req, res, next) ->
+    #TODO:
+    # - remove token
+    # - clear cookie
+    # - destroy session
+    # - use next() for all redirects
+    
     if not req.session?
       next()
       return
 
-    if req.session.token?
-      token = tokens.parse req.session.token
+    if req.cookies[COOKIE]?
+      token = tokens.parse req.cookies[COOKIE]
       tokens.remove token, (count) ->
         res.clearCookie COOKIE
         req.session.destroy () ->

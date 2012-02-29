@@ -82,6 +82,7 @@ module.exports = (app) ->
   # signup and login
   app.post '/users', (req, res) ->
     cred = req.body.user
+    console.log cred
     if cred.name == ''
       req.flash 'warn', "The user name cannot be blank"
       res.redirect '/signup'

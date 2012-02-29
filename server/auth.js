@@ -1,22 +1,19 @@
 (function() {
 
   module.exports = function(app, redis) {
-    var COOKIE, initContext, persist, toLogin, tokens, users;
+    var COOKIE, initContext, toLogin, tokens, users;
     COOKIE = 'logintoken';
     tokens = require('../models/tokens.js')(redis);
     users = require('../models/users.js')(redis);
-    persist = function(res, token) {
-      var opts;
-      opts = {
-        expires: new Date(Date.now() + 2 * 604800000),
-        path: '/'
-      };
-      return res.cookie(COOKIE, tokens.stringify(token), opts);
-    };
     initContext = function(req, res, user, token, next) {
       req.session.user = user;
       return tokens.save(token, function() {
-        persist(res, token);
+        var opts;
+        opts = {
+          expires: new Date(Date.now() + 2 * 604800000),
+          path: '/'
+        };
+        res.cookie(COOKIE, tokens.stringify(token), opts);
         return next();
       });
     };
@@ -28,7 +25,7 @@
         var token;
         if (req.session.user) {
           return next();
-        } else if (req.cookies.token != null) {
+        } else if (req.cookies[COOKIE] != null) {
           token = tokens.parse(req.cookies[COOKIE]);
           return tokens.verify(token, function(verified) {
             if (verified != null) {
@@ -53,8 +50,8 @@
           next();
           return;
         }
-        if (req.session.token != null) {
-          token = tokens.parse(req.session.token);
+        if (req.cookies[COOKIE] != null) {
+          token = tokens.parse(req.cookies[COOKIE]);
           return tokens.remove(token, function(count) {
             res.clearCookie(COOKIE);
             return req.session.destroy(function() {
