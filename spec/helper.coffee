@@ -1,3 +1,8 @@
-module.exports = (redis, items, users) ->
-  reset: () ->
-    redis.flushdb()
+module.exports = (redis) ->
+  resetDb: () ->
+    @client = redis.createClient()
+    @client.flushdb()
+    @client
+
+  closeDb: () ->
+    @client.quit()

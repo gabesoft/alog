@@ -17,7 +17,11 @@
           return callback(token);
         });
       },
-      create: function(username, callback) {
+      remove: function(token, callback) {
+        return 0;
+      },
+      create: function(username) {
+        console.log('creating');
         return {
           name: username,
           id: mktoken(),

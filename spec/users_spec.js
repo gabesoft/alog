@@ -1,14 +1,10 @@
 (function() {
-  var helper, redis, users;
+  var helper;
 
-  redis = require('redis').createClient();
-
-  users = require('../models/users.js')(redis);
-
-  helper = require('./helper.js')(redis);
+  helper = require('./helper.js')(require('redis'));
 
   describe('users', function() {
-    var create, mkuser;
+    var create, mkuser, redis, users;
     mkuser = function(err, user) {
       return {
         user: user,
@@ -20,7 +16,15 @@
         return callback(mkuser(err, user));
       });
     };
-    beforeEach(helper.reset);
+    redis = null;
+    users = null;
+    beforeEach(function() {
+      redis = helper.resetDb();
+      return users = require('../models/users.js')(redis);
+    });
+    afterEach(function() {
+      return helper.closeDb();
+    });
     it('should create a new user', function() {
       var data, name;
       name = 'jon@email.com';

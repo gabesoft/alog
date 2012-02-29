@@ -1,6 +1,4 @@
-redis = require('redis').createClient()
-users = require('../models/users.js')(redis)
-helper = require('./helper.js')(redis)
+helper = require('./helper.js')(require('redis'))
 
 describe 'users', ->
   mkuser = (err, user) ->
@@ -10,8 +8,16 @@ describe 'users', ->
   create = (name, pass, callback) ->
     users.create name, pass, (err, user) ->
       callback (mkuser err, user)
+
+  redis = null
+  users = null
         
-  beforeEach helper.reset
+  beforeEach () ->
+    redis = helper.resetDb()
+    users = require('../models/users.js')(redis)
+
+  afterEach () ->
+    helper.closeDb()
 
   it 'should create a new user', () ->
     name = 'jon@email.com'

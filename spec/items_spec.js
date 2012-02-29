@@ -1,18 +1,20 @@
 (function() {
-  var helper, items, redis;
+  var helper;
 
-  redis = require('redis').createClient();
-
-  items = require('../models/items.js')(redis).create({
-    name: 'test'
-  });
-
-  helper = require('./helper.js')(redis);
+  helper = require('./helper.js')(require('redis'));
 
   describe('items', function() {
-    var add;
+    var add, items, redis;
+    items = null;
+    redis = null;
     beforeEach(function() {
-      return helper.reset();
+      redis = helper.resetDb();
+      return items = require('../models/items.js')(redis).create({
+        name: 'test'
+      });
+    });
+    afterEach(function() {
+      return helper.closeDb();
     });
     add = function(name, callback) {
       return items.add({
@@ -138,7 +140,6 @@
               return run;
             });
             return runs(function() {
-              console.log(count);
               return expect(count).toEqual(3);
             });
           });

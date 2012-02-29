@@ -1,31 +1,25 @@
 (function() {
-  var helper, redis, tokens;
+  var helper;
 
-  redis = require('redis').createClient();
-
-  tokens = require('../models/tokens.js')(redis);
-
-  helper = require('./helper.js')(redis, items, users);
+  helper = require('./helper.js')(require('redis'));
 
   describe('tokens', function() {
-    beforeEach(helper.reset);
-    it('should create a new token', function() {
-      return 0;
+    var redis, tokens;
+    tokens = null;
+    redis = null;
+    beforeEach(function() {
+      redis = helper.resetDb();
+      return tokens = require('../models/tokens.js')(redis);
     });
-    it('should reset a token', function() {
-      return 0;
+    afterEach(function() {
+      return helper.closeDb();
     });
-    it('should save a token', function() {
-      return 0;
-    });
-    it('should get a token', function() {
-      return 0;
-    });
-    it('should verify a valid token', function() {
-      return 0;
-    });
-    return it('should fail to verify an invalid token', function() {
-      return 0;
+    return it('should create a new token', function() {
+      var name, token;
+      console.log('start');
+      name = 'jean';
+      token = tokens.create(name);
+      return expect(token.name).toEqual(name);
     });
   });
 

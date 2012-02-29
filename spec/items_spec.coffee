@@ -1,10 +1,15 @@
-redis = require('redis').createClient()
-items = require('../models/items.js')(redis).create(name: 'test')
-helper = require('./helper.js')(redis)
+helper = require('./helper.js')(require('redis'))
 
 describe 'items', ->
+  items = null
+  redis = null
+
   beforeEach () ->
-    helper.reset()
+    redis = helper.resetDb()
+    items = require('../models/items.js')(redis).create(name: 'test')
+
+  afterEach () ->
+    helper.closeDb()
 
   add = (name, callback) ->
     items.add { name: name, date: new Date() }, callback
@@ -89,5 +94,4 @@ describe 'items', ->
 
           waitsFor ()-> run
           runs ->
-            console.log(count)
             expect(count).toEqual(3)

@@ -9,8 +9,13 @@ module.exports = (redis) ->
     token.token = mktoken()
     redis.set (mkkey token), (JSON.stringify token), (err, res) ->
       callback(token)
+  
+  remove: (token, callback) ->
+    # todo implement
+    0
 
-  create: (username, callback) ->
+  create: (username) ->
+    console.log 'creating'
     name  : username
     id    : mktoken()
     token : mktoken()

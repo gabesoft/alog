@@ -1,9 +1,14 @@
 (function() {
 
-  module.exports = function(redis, items, users) {
+  module.exports = function(redis) {
     return {
-      reset: function() {
-        return redis.flushdb();
+      resetDb: function() {
+        this.client = redis.createClient();
+        this.client.flushdb();
+        return this.client;
+      },
+      closeDb: function() {
+        return this.client.quit();
       }
     };
   };
