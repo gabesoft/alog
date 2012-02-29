@@ -29,7 +29,7 @@
         if (req.session.user) {
           return next();
         } else if (req.cookies.token != null) {
-          token = tokens.parse(req.cookies.token);
+          token = tokens.parse(req.cookies[COOKIE]);
           return tokens.verify(token, function(verified) {
             if (verified != null) {
               return users.get(token.name, function(user) {
@@ -83,11 +83,9 @@
       },
       reset: function(req, res, next) {
         var cred;
-        console.log('reset');
         cred = req.body.user;
         return users.create(cred.name, cred.pass, function(err, user) {
           var token;
-          console.log('user created', user, err);
           if (err != null) {
             req.flash('warn', err.message);
             return res.redirect('/signup');

@@ -92,6 +92,5 @@ module.exports = (app) ->
       req.flash 'warn', "Passwords don't match"
       res.redirect '/signup'
     else
-      console.log 'auth', auth
       auth.reset req, res, () ->
         res.redirect '/'

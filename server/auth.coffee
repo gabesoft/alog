@@ -22,7 +22,7 @@ module.exports = (app, redis) ->
     if req.session.user
       next()
     else if req.cookies.token?
-      token = tokens.parse req.cookies.token
+      token = tokens.parse req.cookies[COOKIE]
       tokens.verify token, (verified) ->
         if verified?
           users.get token.name, (user) ->
@@ -61,10 +61,8 @@ module.exports = (app, redis) ->
         toLogin res
 
   reset: (req, res, next) ->
-    console.log 'reset'
     cred = req.body.user
     users.create cred.name, cred.pass, (err, user) ->
-      console.log 'user created', user, err
       if err?
         req.flash 'warn', err.message
         res.redirect '/signup'

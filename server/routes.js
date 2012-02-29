@@ -100,7 +100,6 @@
         req.flash('warn', "Passwords don't match");
         return res.redirect('/signup');
       } else {
-        console.log('auth', auth);
         return auth.reset(req, res, function() {
           return res.redirect('/');
         });
