@@ -29,9 +29,12 @@ module.exports = (app) ->
   items = null
 
   authenticate = (req, res, next) ->
-    auth.authenticate req, res, () ->
+    success = () ->
       items = itemsModule.create(req.session.user)
       next()
+    failure = () ->
+      res.redirect '/login'
+    auth.authenticate req, res, success, failure
 
   render = (res, page, layout, title) ->
     res.render page,
@@ -70,14 +73,11 @@ module.exports = (app) ->
     render res, 'login', 'login', 'Login'
 
   app.post '/login', (req, res) ->
-    cred = req.body.user
-    users.authenticate cred.name, cred.pass, (user) ->
-      if user?
-        req.session.user = user
-        res.redirect '/'
-      else
-        req.flash('warn', 'login failed')
-        res.redirect '/login'
+    success = () -> res.redirect '/'
+    failure = () ->
+      req.flash('warn', 'login failed')
+      res.redirect '/login'
+    auth.login req, res, success, failure
   
   # signup and login
   app.post '/users', (req, res) ->
@@ -93,5 +93,10 @@ module.exports = (app) ->
       req.flash 'warn', "Passwords don't match"
       res.redirect '/signup'
     else
-      auth.reset req, res, () ->
-        res.redirect '/'
+      users.create cred.name, cred.pass, (err, user) ->
+        if err?
+          req.flash 'warn', err.message
+          res.redirect '/signup'
+        else
+          auth.reset req, res, user, () ->
+            res.redirect '/'

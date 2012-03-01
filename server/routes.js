@@ -30,10 +30,15 @@
     users = require('../models/users.js')(redisClient);
     items = null;
     authenticate = function(req, res, next) {
-      return auth.authenticate(req, res, function() {
+      var failure, success;
+      success = function() {
         items = itemsModule.create(req.session.user);
         return next();
-      });
+      };
+      failure = function() {
+        return res.redirect('/login');
+      };
+      return auth.authenticate(req, res, success, failure);
     };
     render = function(res, page, layout, title) {
       return res.render(page, {
@@ -75,17 +80,15 @@
       return render(res, 'login', 'login', 'Login');
     });
     app.post('/login', function(req, res) {
-      var cred;
-      cred = req.body.user;
-      return users.authenticate(cred.name, cred.pass, function(user) {
-        if (user != null) {
-          req.session.user = user;
-          return res.redirect('/');
-        } else {
-          req.flash('warn', 'login failed');
-          return res.redirect('/login');
-        }
-      });
+      var failure, success;
+      success = function() {
+        return res.redirect('/');
+      };
+      failure = function() {
+        req.flash('warn', 'login failed');
+        return res.redirect('/login');
+      };
+      return auth.login(req, res, success, failure);
     });
     return app.post('/users', function(req, res) {
       var cred;
@@ -101,8 +104,15 @@
         req.flash('warn', "Passwords don't match");
         return res.redirect('/signup');
       } else {
-        return auth.reset(req, res, function() {
-          return res.redirect('/');
+        return users.create(cred.name, cred.pass, function(err, user) {
+          if (err != null) {
+            req.flash('warn', err.message);
+            return res.redirect('/signup');
+          } else {
+            return auth.reset(req, res, user, function() {
+              return res.redirect('/');
+            });
+          }
         });
       }
     });

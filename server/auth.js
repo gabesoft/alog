@@ -1,7 +1,7 @@
 (function() {
 
   module.exports = function(app, redis) {
-    var COOKIE, initContext, toLogin, tokens, users;
+    var COOKIE, initContext, tokens, users;
     COOKIE = 'logintoken';
     tokens = require('../models/tokens.js')(redis);
     users = require('../models/users.js')(redis);
@@ -14,85 +14,69 @@
         };
         res.cookie(COOKIE, tokens.stringify(token), opts);
         req.session.user = user;
-        console.log('saved', token);
         return next();
       });
     };
-    toLogin = function(res) {
-      return res.redirect('/login');
-    };
     return {
-      authenticate: function(req, res, next) {
+      authenticate: function(req, res, success, failure) {
         var token;
-        console.log('auth', req.session.user, req.cookies[COOKIE]);
         if (req.session.user) {
-          return next();
+          return success();
         } else if (req.cookies[COOKIE] != null) {
           token = tokens.parse(req.cookies[COOKIE]);
           return tokens.verify(token, function(verified) {
             if (verified != null) {
               return users.get(token.name, function(user) {
                 if (user != null) {
-                  return initContext(req, res, user, token, next);
+                  return initContext(req, res, user, token, success);
                 } else {
-                  return toLogin(res);
+                  return failure();
                 }
               });
             } else {
-              return toLogin(res);
+              return failure();
             }
           });
         } else {
-          return toLogin(res);
+          return failure();
         }
       },
       logout: function(req, res, next) {
         var token;
-        if (!(req.session != null)) {
-          next();
-          return;
-        }
         if (req.cookies[COOKIE] != null) {
           token = tokens.parse(req.cookies[COOKIE]);
-          return tokens.remove(token, function(count) {
+          return tokens.remove(token, function() {
             res.clearCookie(COOKIE);
-            return req.session.destroy(function() {
+            if (req.session != null) {
+              return req.session.destroy(next);
+            } else {
               return next();
-            });
+            }
           });
+        } else if (req.session != null) {
+          return req.session.destroy(next);
         } else {
-          return req.session.destroy(function() {
-            return next();
-          });
+          return next();
         }
       },
-      login: function(req, res, next) {
+      login: function(req, res, success, failure) {
         var cred;
         cred = req.body.user;
         return users.authenticate(cred.name, cred.pass, function(user) {
           var token;
           if (user != null) {
+            console.log('login', user);
             token = tokens.create(user.name);
-            return initContext(req, res, user, token, next);
+            return initContext(req, res, user, token, success);
           } else {
-            req.flash('warn', 'login failed');
-            return toLogin(res);
+            return failure();
           }
         });
       },
-      reset: function(req, res, next) {
-        var cred;
-        cred = req.body.user;
-        return users.create(cred.name, cred.pass, function(err, user) {
-          var token;
-          if (err != null) {
-            req.flash('warn', err.message);
-            return res.redirect('/signup');
-          } else {
-            token = tokens.create(user.name);
-            return initContext(req, res, user, token, next);
-          }
-        });
+      reset: function(req, res, user, next) {
+        var token;
+        token = tokens.create(user.name);
+        return initContext(req, res, user, token, next);
       }
     };
   };

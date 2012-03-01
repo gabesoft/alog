@@ -16,7 +16,7 @@ body {
 .title {
   font-weight: bold;
   font-size: 18pt;
-  text-shadow: 0 1px 1px #ccc;
+  text-shadow: 0 1px 1px #000;
   color: #fffef7;
 }
 .title span {
@@ -36,6 +36,8 @@ body {
 }
 .title a {
   color: #fffef7;
+  background: transparent;
+  border-bottom: 0;
 }
 .create-item input {
   width: 100%;
