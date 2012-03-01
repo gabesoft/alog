@@ -40,6 +40,5 @@ module.exports = (redis) ->
 
   get: (name, callback) ->
     key = usersKey name
-    console.log key
     redis.get key, (err, res) ->
       callback?(JSON.parse res)

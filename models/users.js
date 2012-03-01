@@ -56,7 +56,6 @@
       get: function(name, callback) {
         var key;
         key = usersKey(name);
-        console.log(key);
         return redis.get(key, function(err, res) {
           return typeof callback === "function" ? callback(JSON.parse(res)) : void 0;
         });
