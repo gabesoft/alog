@@ -3,20 +3,27 @@ module.exports = (app, redis) ->
   tokens = require('../models/tokens.js')(redis)
   users  = require('../models/users.js')(redis)
 
-  initContext = (req, res, user, token, next) ->
-    tokens.save token, () ->
+  cookie =
+    has: (req) -> req.cookies[COOKIE]?
+    get: (req) -> req.cookies[COOKIE]
+    del: (res) -> res.clearCookie COOKIE
+    put: (res, data) ->
       opts =
         expires: new Date(Date.now() + 2 * 604800000)
         path: '/'
-      res.cookie COOKIE, (tokens.stringify token), opts
+      res.cookie COOKIE, data, opts
+
+  initContext = (req, res, user, token, next) ->
+    tokens.save token, () ->
+      cookie.put res, (tokens.stringify token)
       req.session.user = user
       next()
 
   authenticate: (req, res, success, failure) ->
     if req.session.user
       success()
-    else if req.cookies[COOKIE]?
-      token = tokens.parse req.cookies[COOKIE]
+    else if cookie.has req
+      token = tokens.parse (cookie.get req)
       tokens.verify token, (verified) ->
         if verified?
           users.get token.name, (user) ->
@@ -30,10 +37,10 @@ module.exports = (app, redis) ->
       failure()
     
   logout: (req, res, next) ->
-    if req.cookies[COOKIE]?
-      token = tokens.parse req.cookies[COOKIE]
+    if cookie.has req
+      token = tokens.parse (cookie.get req)
       tokens.remove token, () ->
-        res.clearCookie COOKIE
+        cookie.del res
         if req.session?
           req.session.destroy next
         else
@@ -47,7 +54,6 @@ module.exports = (app, redis) ->
     cred = req.body.user
     users.authenticate cred.name, cred.pass, (user) ->
       if user?
-        console.log 'login', user
         token = tokens.create user.name
         initContext req, res, user, token, success
       else

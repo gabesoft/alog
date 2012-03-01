@@ -93,7 +93,6 @@
     return app.post('/users', function(req, res) {
       var cred;
       cred = req.body.user;
-      console.log(cred);
       if (cred.name === '') {
         req.flash('warn', "The user name cannot be blank");
         return res.redirect('/signup');
