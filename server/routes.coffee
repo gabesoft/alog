@@ -1,7 +1,8 @@
 module.exports = (app) ->
-  TITLE = 'Log Book'
-  redis = require('redis')
-  url   = require('url')
+  TITLE  = 'Log Book'
+  redis  = require('redis')
+  expose = require('express-expose')
+  url    = require('url')
 
   createRedisClient = () ->
     client = null
@@ -41,17 +42,24 @@ module.exports = (app) ->
       title: TITLE
       titleInfo: title
       layout: "layouts/#{layout}"
+
+  getItems = (start, limit, next) ->
+    items.get start, start + limit - 1, next
       
   app.get '/', authenticate, (req, res) ->
-    render res, 'index', 'main', req.session.user.name
+    start = 0
+    limit = 30
+    getItems start, limit, (list) ->
+      res.expose items: list
+      render res, 'index', 'main', req.session.user.name
 
   # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
   # /items?start=0&limit=0 - returns all records
   app.get '/items', authenticate, (req, res) ->
     start = (Number) req.query.start or 0
     limit = (Number) req.query.limit or 10
-    items.get start, start + limit - 1, (list) ->
-      res.send(list)
+    getItems start, limit, (list) ->
+      res.send list
 
   app.post '/items', authenticate, (req, res) ->
     items.add req.body, (item) ->

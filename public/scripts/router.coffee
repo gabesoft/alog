@@ -6,5 +6,5 @@ class exports.Router extends Backbone.Router
     ''      : 'main'
 
   main: () ->
-    items = new model.ItemList()
+    items = new model.ItemList(window.express.items)
     itemsView = new view.LogBook(model: items, el: content)

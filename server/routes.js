@@ -1,9 +1,10 @@
 (function() {
 
   module.exports = function(app) {
-    var TITLE, auth, authenticate, createRedisClient, items, itemsModule, redis, redisClient, render, url, users;
+    var TITLE, auth, authenticate, createRedisClient, expose, getItems, items, itemsModule, redis, redisClient, render, url, users;
     TITLE = 'Log Book';
     redis = require('redis');
+    expose = require('express-expose');
     url = require('url');
     createRedisClient = function() {
       var auth, client, rurl;
@@ -47,14 +48,25 @@
         layout: "layouts/" + layout
       });
     };
+    getItems = function(start, limit, next) {
+      return items.get(start, start + limit - 1, next);
+    };
     app.get('/', authenticate, function(req, res) {
-      return render(res, 'index', 'main', req.session.user.name);
+      var limit, start;
+      start = 0;
+      limit = 30;
+      return getItems(start, limit, function(list) {
+        res.expose({
+          items: list
+        });
+        return render(res, 'index', 'main', req.session.user.name);
+      });
     });
     app.get('/items', authenticate, function(req, res) {
       var limit, start;
       start = Number(req.query.start || 0);
       limit = Number(req.query.limit || 10);
-      return items.get(start, start + limit - 1, function(list) {
+      return getItems(start, limit, function(list) {
         return res.send(list);
       });
     });

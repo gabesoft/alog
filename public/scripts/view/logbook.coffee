@@ -6,12 +6,9 @@ class exports.LogBook extends Backbone.View
 
   initialize: () ->
     @input = $ '#add-item'
-
+    @model.each @append
     @model.bind 'add', @prepend
     @model.bind 'reset', @addAll
-
-    @model.fetch
-      data: { start: 0, limit: 50 }
 
   prepend: (item) =>
     itemEl = $('#item-list')

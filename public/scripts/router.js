@@ -21,7 +21,7 @@
 
     Router.prototype.main = function() {
       var items, itemsView;
-      items = new model.ItemList();
+      items = new model.ItemList(window.express.items);
       return itemsView = new view.LogBook({
         model: items,
         el: content

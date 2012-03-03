@@ -23,14 +23,9 @@
 
     LogBook.prototype.initialize = function() {
       this.input = $('#add-item');
+      this.model.each(this.append);
       this.model.bind('add', this.prepend);
-      this.model.bind('reset', this.addAll);
-      return this.model.fetch({
-        data: {
-          start: 0,
-          limit: 50
-        }
-      });
+      return this.model.bind('reset', this.addAll);
     };
 
     LogBook.prototype.prepend = function(item) {
