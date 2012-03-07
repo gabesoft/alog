@@ -33,7 +33,7 @@
         return redis.get(mkkey(token), function(err, res) {
           var saved;
           saved = JSON.parse(res);
-          if (saved.token === token.token) {
+          if ((saved != null ? saved.token : void 0) === token.token) {
             return callback(saved);
           } else {
             return callback(null);

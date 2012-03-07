@@ -22,7 +22,7 @@ module.exports = (redis) ->
   verify: (token, callback) ->
     redis.get (mkkey token), (err, res) ->
       saved = JSON.parse res
-      if saved.token == token.token
+      if saved?.token == token.token
         callback(saved)
       else
         callback(null)
