@@ -31,7 +31,7 @@
         var item;
         switch (data.action) {
           case "add":
-            item = items.last();
+            item = (items.get(data.item.id)) || items.last();
             if (!(item != null) || ((item != null ? item.id : void 0) != null)) {
               return items.add(data.item);
             }

@@ -13,7 +13,7 @@ class exports.Router extends Backbone.Router
     socket.on "items-change-#{express.user}", (data) ->
       switch data.action
         when "add"
-          item = items.last()
+          item = (items.get data.item.id) or items.last()
           items.add data.item if not item? or item?.id?
         when "del"
           item = items.get data.item.id
