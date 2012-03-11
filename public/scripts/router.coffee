@@ -9,6 +9,9 @@ class exports.Router extends Backbone.Router
     items = new model.ItemList(express.items)
     itemsView = new view.LogBook(model: items, el: content)
 
+    io.configure () ->
+      io.set 'transports', ['xhr-polling']
+      io.set 'polling duration', 10
     socket = io.connect()
     socket.on "items-change-#{express.user}", (data) ->
       switch data.action

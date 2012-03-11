@@ -26,6 +26,10 @@
         model: items,
         el: content
       });
+      io.configure(function() {
+        io.set('transports', ['xhr-polling']);
+        return io.set('polling duration', 10);
+      });
       socket = io.connect();
       return socket.on("items-change-" + express.user, function(data) {
         var item;
