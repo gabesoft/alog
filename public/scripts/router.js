@@ -21,14 +21,25 @@
 
     Router.prototype.main = function() {
       var items, itemsView, socket;
-      socket = io.connect();
-      socket.on("items-change-" + express.user, function(data) {
-        return console.log(data);
-      });
       items = new model.ItemList(express.items);
-      return itemsView = new view.LogBook({
+      itemsView = new view.LogBook({
         model: items,
         el: content
+      });
+      socket = io.connect();
+      return socket.on("items-change-" + express.user, function(data) {
+        var item;
+        switch (data.action) {
+          case "add":
+            item = items.last();
+            if (!(item != null) || ((item != null ? item.id : void 0) != null)) {
+              return items.add(data.item);
+            }
+            break;
+          case "del":
+            item = items.get(data.item.id);
+            if (item != null) return items.remove(item);
+        }
       });
     };
 

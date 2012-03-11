@@ -23,7 +23,8 @@
 
     LogItem.prototype.initialize = function(config) {
       this.template = $('#item-template').template();
-      return this.input = config.input;
+      this.input = config.input;
+      return this.model.view = this;
     };
 
     LogItem.prototype.getDeleteButton = function() {
@@ -42,13 +43,16 @@
       return this;
     };
 
-    LogItem.prototype.deleteItem = function(e) {
-      var parent;
-      this.model.destroy();
-      parent = $(e.target.parentElement);
-      return parent.fadeOut(function() {
-        return parent.remove();
+    LogItem.prototype.remove = function(el) {
+      el = $(el || this.el);
+      return el.fadeOut(function() {
+        return el.remove();
       });
+    };
+
+    LogItem.prototype.deleteItem = function(e) {
+      this.model.destroy();
+      return this.remove(e.target.parentElement);
     };
 
     LogItem.prototype.repostItem = function(e) {

@@ -49,14 +49,13 @@ module.exports = (app) ->
 
   app.post '/items', authenticate, (req, res) ->
     items.add req.body, (item) ->
-      pubsub.itemAdd req, item
+      pubsub.notifyItemAdd req, item
       res.send(item)
 
   # only the latest added item can be deleted
   app.delete '/items', authenticate, (req, res) ->
     items.pop (item) ->
-      console.log 'pop', item
-      pubsub.itemDel req, item
+      pubsub.notifyItemDel req, item
       res.send(item)
 
   app.get '/signup', (req, res) ->

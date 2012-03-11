@@ -57,14 +57,13 @@
     });
     app.post('/items', authenticate, function(req, res) {
       return items.add(req.body, function(item) {
-        pubsub.itemAdd(req, item);
+        pubsub.notifyItemAdd(req, item);
         return res.send(item);
       });
     });
     app["delete"]('/items', authenticate, function(req, res) {
       return items.pop(function(item) {
-        console.log('pop', item);
-        pubsub.itemDel(req, item);
+        pubsub.notifyItemDel(req, item);
         return res.send(item);
       });
     });

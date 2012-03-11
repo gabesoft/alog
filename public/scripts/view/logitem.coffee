@@ -8,6 +8,7 @@ class exports.LogItem extends Backbone.View
   initialize: (config) ->
     @template = $('#item-template').template()
     @input = config.input
+    @model.view = @
 
   getDeleteButton: () ->
     $(@el).children('input.delete').first()
@@ -21,16 +22,17 @@ class exports.LogItem extends Backbone.View
     $(@el).html html
     @
 
-  deleteItem: (e) =>
-    @model.destroy();
+  remove: (el) ->
+    el = $(el or @el)
+    el.fadeOut () -> el.remove()
 
-    parent = $(e.target.parentElement)
-    parent.fadeOut ->
-      parent.remove()
+  deleteItem: (e) =>
+    @model.destroy()
+    @remove e.target.parentElement
 
   repostItem: (e) =>
     @input.val(@model.get('text'))
-    @input.trigger('keypress', 13);
+    @input.trigger('keypress', 13)
 
   showDelete: () ->
     button = @getDeleteButton()

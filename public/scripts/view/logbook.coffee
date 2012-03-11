@@ -8,7 +8,11 @@ class exports.LogBook extends Backbone.View
     @input = $ '#add-item'
     @model.each @append
     @model.bind 'add', @prepend
+    @model.bind 'remove', @remove
     @model.bind 'reset', @addAll
+
+  remove: (item, list, opts) =>
+    item.view?.remove()
 
   prepend: (item) =>
     itemEl = $('#item-list')
@@ -42,5 +46,8 @@ class exports.LogBook extends Backbone.View
     if !text
       return
 
-    @model.create text: text, date: new Date
+    item =
+      text: text
+      date: new Date()
+    @model.create item, wait: false
     @input.val('')

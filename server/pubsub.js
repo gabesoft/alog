@@ -1,7 +1,7 @@
 (function() {
 
   module.exports = function(app, pub, sub) {
-    var ch, change, io;
+    var ch, fireChangeEvent, io;
     io = require('socket.io').listen(app);
     ch = 'items-change';
     io.sockets.on('connection', function(socket) {
@@ -16,7 +16,7 @@
       });
       return sub.subscribe(ch);
     });
-    change = function(req, data) {
+    fireChangeEvent = function(req, data) {
       var wrap;
       wrap = {
         user: req.session.user.name,
@@ -25,15 +25,15 @@
       return pub.publish(ch, JSON.stringify(wrap));
     };
     return {
-      itemAdd: function(req, item) {
-        return change(req, {
-          data: item,
+      notifyItemAdd: function(req, item) {
+        return fireChangeEvent(req, {
+          item: item,
           action: 'add'
         });
       },
-      itemDel: function(req, item) {
-        return change(req, {
-          data: item,
+      notifyItemDel: function(req, item) {
+        return fireChangeEvent(req, {
+          item: item,
           action: 'del'
         });
       }

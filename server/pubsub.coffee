@@ -13,18 +13,18 @@ module.exports = (app, pub, sub) ->
 
     sub.subscribe ch
 
-  change = (req, data) ->
+  fireChangeEvent = (req, data) ->
     wrap =
       user: req.session.user.name
       data: data
     pub.publish ch, (JSON.stringify wrap)
 
-  itemAdd: (req, item) ->
-    change req,
-      data:   item
+  notifyItemAdd: (req, item) ->
+    fireChangeEvent req,
+      item:   item
       action: 'add'
 
-  itemDel: (req, item) ->
-    change req,
-      data:   item
+  notifyItemDel: (req, item) ->
+    fireChangeEvent req,
+      item:   item
       action: 'del'
