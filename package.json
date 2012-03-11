@@ -12,7 +12,8 @@
     "jade"          : ">= 0.0.1",
     "redis"         : ">= 0.0.1",
     "stylus"        : ">= 0.24.0",
-    "browserify"    : ">= 1.9.4"
+    "browserify"    : ">= 1.9.4",
+    "socket.io"     : ">=0.9.0"
   },
 
   "devDependencies" : {

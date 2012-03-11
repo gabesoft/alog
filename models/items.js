@@ -19,8 +19,8 @@
             });
           },
           pop: function(callback) {
-            return redis.lpop(key, function(item) {
-              return typeof callback === "function" ? callback(item) : void 0;
+            return redis.lpop(key, function(err, item) {
+              return typeof callback === "function" ? callback(JSON.parse(item)) : void 0;
             });
           },
           get: function(start, end, callback) {

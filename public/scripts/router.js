@@ -20,8 +20,12 @@
     };
 
     Router.prototype.main = function() {
-      var items, itemsView;
-      items = new model.ItemList(window.express.items);
+      var items, itemsView, socket;
+      socket = io.connect();
+      socket.on("items-change-" + express.user, function(data) {
+        return console.log(data);
+      });
+      items = new model.ItemList(express.items);
       return itemsView = new view.LogBook({
         model: items,
         el: content

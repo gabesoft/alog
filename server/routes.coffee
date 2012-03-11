@@ -3,30 +3,16 @@ module.exports = (app) ->
   redis  = require('redis')
   expose = require('express-expose')
   url    = require('url')
+  helper = require('./helper.js')()
 
-  createRedisClient = () ->
-    client = null
+  pubClient = helper.redisClient (app.set 'redisdb')
+  subClient = helper.redisClient (app.set 'redisdb')
+  pubsub    = require('./pubsub.js')(app, pubClient, subClient)
 
-    if process.env.REDISTOGO_URL?
-      rurl = url.parse process.env.REDISTOGO_URL
-      auth = rurl.auth.split(':')
-      client = redis.createClient(rurl.port, rurl.hostname)
-      client.auth(auth[1])
-    else
-      client = redis.createClient()
+  itemsModule = require('../models/items.js')(pubClient)
 
-    client.select app.set('redisdb'), (res, err) ->
-      console.log res, err
-
-    client
-
-  redisClient = createRedisClient();
-  redisClient.on('error', (e) -> console.log e)
-
-  itemsModule = require('../models/items.js')(redisClient)
-
-  auth  = require('./auth')(app, redisClient)
-  users = require('../models/users.js')(redisClient)
+  auth  = require('./auth')(app, pubClient)
+  users = require('../models/users.js')(pubClient)
   items = null
 
   authenticate = (req, res, next) ->
@@ -50,7 +36,7 @@ module.exports = (app) ->
     start = 0
     limit = 30
     getItems start, limit, (list) ->
-      res.expose items: list
+      res.expose items: list, user: req.session.user.name
       render res, 'index', 'main', req.session.user.name
 
   # /items?start=1&limit=3 - returns 3 records starting at index 1 (0 indexed)
@@ -63,11 +49,14 @@ module.exports = (app) ->
 
   app.post '/items', authenticate, (req, res) ->
     items.add req.body, (item) ->
+      pubsub.itemAdd req, item
       res.send(item)
 
   # only the latest added item can be deleted
   app.delete '/items', authenticate, (req, res) ->
     items.pop (item) ->
+      console.log 'pop', item
+      pubsub.itemDel req, item
       res.send(item)
 
   app.get '/signup', (req, res) ->

@@ -6,5 +6,9 @@ class exports.Router extends Backbone.Router
     ''      : 'main'
 
   main: () ->
-    items = new model.ItemList(window.express.items)
+    socket = io.connect()
+    socket.on "items-change-#{express.user}", (data) ->
+      console.log data
+
+    items = new model.ItemList(express.items)
     itemsView = new view.LogBook(model: items, el: content)

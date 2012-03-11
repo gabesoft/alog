@@ -11,7 +11,8 @@ module.exports = (redis) ->
           redis.ltrim(key, 0, MAX_ITEMS, () -> callback? item))
 
     pop: (callback) ->
-      redis.lpop(key, (item) -> callback? item)
+      redis.lpop key, (err, item) ->
+        callback? (JSON.parse item)
 
     get: (start, end, callback) ->
       redis.lrange key, start, end, (err, reply) ->

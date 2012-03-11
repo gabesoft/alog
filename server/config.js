@@ -1,21 +1,12 @@
 (function() {
 
   module.exports = function(app, express) {
-    var RedisStore, auth, dbconfig, rurl, stylus, url;
+    var RedisStore, dbconfig, helper, stylus, url;
     stylus = require('stylus');
     url = require('url');
+    helper = require('./helper.js')();
     RedisStore = require('connect-redis')(express);
-    dbconfig = {};
-    if (process.env.REDISTOGO_URL) {
-      rurl = url.parse(process.env.REDISTOGO_URL);
-      auth = rurl.auth.split(':');
-      dbconfig = {
-        host: rurl.hostname,
-        port: rurl.port,
-        db: auth[0],
-        pass: auth[1]
-      };
-    }
+    dbconfig = helper.parseUrl(process.env.REDISTOGO_URL);
     app.configure(function() {
       app.set('views', __dirname + '/../views');
       app.set('view engine', 'jade');
