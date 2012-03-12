@@ -2,9 +2,13 @@ module.exports = (app, pub, sub) ->
   io = require('socket.io').listen(app)
   ch = 'items-change'
 
-  io.configure () ->
+  io.configure 'production', () ->
     io.set 'transports', ['xhr-polling']
     io.set 'polling duration', 10
+    io.set 'log level', 1
+  io.configure 'development', () ->
+    io.set 'transports', ['websocket']
+    io.set 'log level', 3
   io.sockets.on 'connection', (socket) ->
     sub.on 'subscribe', (channel, count) ->
       console.log "subscribed to #{channel}:#{count}"

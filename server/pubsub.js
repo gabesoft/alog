@@ -4,9 +4,14 @@
     var ch, fireChangeEvent, io;
     io = require('socket.io').listen(app);
     ch = 'items-change';
-    io.configure(function() {
+    io.configure('production', function() {
       io.set('transports', ['xhr-polling']);
-      return io.set('polling duration', 10);
+      io.set('polling duration', 10);
+      return io.set('log level', 1);
+    });
+    io.configure('development', function() {
+      io.set('transports', ['websocket']);
+      return io.set('log level', 3);
     });
     io.sockets.on('connection', function(socket) {
       sub.on('subscribe', function(channel, count) {
