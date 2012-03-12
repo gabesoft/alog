@@ -9,15 +9,13 @@ class exports.Router extends Backbone.Router
     items = new model.ItemList(express.items)
     itemsView = new view.LogBook(model: items, el: content)
 
-    io.configure () ->
-      io.set 'transports', ['xhr-polling']
-      io.set 'polling duration', 10
     socket = io.connect()
     socket.on "items-change-#{express.user}", (data) ->
       switch data.action
         when "add"
-          item = (items.get data.item.id) or items.last()
-          items.add data.item if not item? or item?.id?
+          existing = items.get data.item.id
+          last = items.last()
+          items.add data.item unless existing? or (not last?.id?)
         when "del"
           item = items.get data.item.id
           items.remove item if item?

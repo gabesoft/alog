@@ -26,17 +26,14 @@
         model: items,
         el: content
       });
-      io.configure(function() {
-        io.set('transports', ['xhr-polling']);
-        return io.set('polling duration', 10);
-      });
       socket = io.connect();
       return socket.on("items-change-" + express.user, function(data) {
-        var item;
+        var existing, item, last;
         switch (data.action) {
           case "add":
-            item = (items.get(data.item.id)) || items.last();
-            if (!(item != null) || ((item != null ? item.id : void 0) != null)) {
+            existing = items.get(data.item.id);
+            last = items.last();
+            if (!((existing != null) || (!((last != null ? last.id : void 0) != null)))) {
               return items.add(data.item);
             }
             break;

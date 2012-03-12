@@ -4,6 +4,10 @@
     var ch, fireChangeEvent, io;
     io = require('socket.io').listen(app);
     ch = 'items-change';
+    io.configure(function() {
+      io.set('transports', ['xhr-polling']);
+      return io.set('polling duration', 10);
+    });
     io.sockets.on('connection', function(socket) {
       sub.on('subscribe', function(channel, count) {
         return console.log("subscribed to " + channel + ":" + count);
