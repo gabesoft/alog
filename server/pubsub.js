@@ -5,6 +5,9 @@
     io = require('socket.io').listen(app);
     ch = 'items-change';
     io.configure('production', function() {
+      io.enable('browser client minification');
+      io.enable('browser client etag');
+      io.enable('browser client gzip');
       io.set('transports', ['xhr-polling']);
       io.set('polling duration', 10);
       return io.set('log level', 1);

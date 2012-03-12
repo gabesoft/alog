@@ -3,12 +3,17 @@ module.exports = (app, pub, sub) ->
   ch = 'items-change'
 
   io.configure 'production', () ->
+    io.enable 'browser client minification'
+    io.enable 'browser client etag'
+    io.enable 'browser client gzip'
     io.set 'transports', ['xhr-polling']
     io.set 'polling duration', 10
     io.set 'log level', 1
+
   io.configure 'development', () ->
     io.set 'transports', ['websocket']
     io.set 'log level', 3
+
   io.sockets.on 'connection', (socket) ->
     sub.on 'subscribe', (channel, count) ->
       console.log "subscribed to #{channel}:#{count}"
