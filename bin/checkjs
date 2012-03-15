@@ -1,0 +1,7 @@
+#!/bin/bash
+dir=`dirname $0`
+
+find $dir/../public/scripts/*js | xargs jshint
+find $dir/../public/scripts/model/*js | xargs jshint
+find $dir/../public/scripts/view/*js | xargs jshint
+find $dir/../server/*js | xargs jshint
