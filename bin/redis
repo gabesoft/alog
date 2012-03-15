@@ -1,2 +1,2 @@
 #!/bin/bash
-redis-server /opt/local/etc/redis.conf
+sudo redis-server /opt/local/etc/redis.conf
