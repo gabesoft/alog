@@ -6,7 +6,7 @@ module.exports = () ->
     if not redisUrl? then return null
 
     rurl = url.parse redisUrl
-    auth = rurl.auth.split(':')
+    auth = rurl.auth?.split(':')
 
     host: rurl.hostname
     port: rurl.port

@@ -6,10 +6,10 @@
     redis = require('redis');
     return {
       parseUrl: function(redisUrl) {
-        var auth, rurl;
+        var auth, rurl, _ref;
         if (!(redisUrl != null)) return null;
         rurl = url.parse(redisUrl);
-        auth = rurl.auth.split(':');
+        auth = (_ref = rurl.auth) != null ? _ref.split(':') : void 0;
         return {
           host: rurl.hostname,
           port: rurl.port,
